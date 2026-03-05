@@ -136,18 +136,18 @@ s_ev_mc, s_w_mc, s_true_mc, s_lab_mc, s_fnames_mc, b_ev_mc, b_w_mc, b_lab_mc, b_
     mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
     cuts=cuts_with_mc, skip_cut="max_directionZ"
 )
-this_hist_n_bins = 40
+
 hist, bin = np.histogram(np.maximum(
             b_ev_mc[:, aggregate_dict["directionZ"]],
             b_ev_mc[:, aggregate_dict["directionZ2"]]
-        ), bins=this_hist_n_bins, range=(-1,1), weights=b_w_mc)
+        ), bins=parameters["analysis"]["nbins"], range=(-1,1), weights=b_w_mc)
 
 # save the only the hist to file
 np.savetxt(os.path.join(output_folder_base, "bkg_max_directionZ_hist.txt"), hist)
 hist, bin = np.histogram(np.maximum(
             b_ev_mc[:, aggregate_dict["directionZ"]],
             b_ev_mc[:, aggregate_dict["directionZ2"]]
-        ), bins=this_hist_n_bins, range=(-1,1))
+        ), bins=parameters["analysis"]["nbins"], range=(-1,1))
 
 # save the only the hist to file
 np.savetxt(os.path.join(output_folder_base, "bkg_max_directionZ_hist_absolute.txt"), hist)
@@ -155,35 +155,35 @@ np.savetxt(os.path.join(output_folder_base, "bkg_max_directionZ_hist_absolute.tx
 hist, bin = np.histogram(np.maximum(
             s_ev_mc[:, aggregate_dict["directionZ"]],
             s_ev_mc[:, aggregate_dict["directionZ2"]]
-        ), bins=this_hist_n_bins, range=(-1,1), weights=s_w_mc)
+        ), bins=parameters["analysis"]["nbins"], range=(-1,1), weights=s_w_mc)
 np.savetxt(os.path.join(output_folder_base, "sig_max_directionZ_hist.txt"), hist)
 
 hist, bin = np.histogram(np.maximum(
             s_ev_mc[:, aggregate_dict["directionZ"]],
             s_ev_mc[:, aggregate_dict["directionZ2"]]
-        ), bins=this_hist_n_bins, range=(-1,1))
+        ), bins=parameters["analysis"]["nbins"], range=(-1,1))
 np.savetxt(os.path.join(output_folder_base, "sig_max_directionZ_hist_absolute.txt"), hist)
 
 # do the same for MC
 hist, bin = np.histogram(np.maximum(
             mc_ev_mc[:, aggregate_dict["directionZ"]],
             mc_ev_mc[:, aggregate_dict["directionZ2"]]
-        ), bins=this_hist_n_bins, range=(-1,1), weights=mc_w_mc)
+        ), bins=parameters["analysis"]["nbins"], range=(-1,1), weights=mc_w_mc)
 np.savetxt(os.path.join(output_folder_base, "mc_max_directionZ_hist.txt"), hist)
 hist, bin = np.histogram(np.maximum(
             mc_ev_mc[:, aggregate_dict["directionZ"]],
             mc_ev_mc[:, aggregate_dict["directionZ2"]]
-        ), bins=this_hist_n_bins, range=(-1,1))
+        ), bins=parameters["analysis"]["nbins"], range=(-1,1))
 np.savetxt(os.path.join(output_folder_base, "mc_max_directionZ_hist_absolute.txt"), hist)
 
 
 
 # ----------------------------------------------
 # Apply cuts in order, save the results in a latex table
-create_table_cuts(sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
-                    bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
-                    mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
-                    cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base)
+create_table_cuts_with_mc(  sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
+                            bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
+                            mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
+                            cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base)
 
 
 # get more information about the events passing all cuts

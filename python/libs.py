@@ -681,7 +681,7 @@ def apply_all_cuts_MC( sig_events, sig_weights, sig_true_events, sig_labels, sig
 
 
 
-def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
+def create_table_cuts_with_mc( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
                     bkg_events, bkg_weights, bkg_labels, bkg_filenames, mc_events, mc_weights, mc_true_events, mc_labels, mc_filenames, 
                     cuts_names, skip_cut=None, output_folder=None):
     # Work on copies
@@ -751,6 +751,70 @@ def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig
 
 
     return s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames, mc_ev, mc_w, mc_true, mc_lab, mc_fnames
+
+
+
+def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
+                    bkg_events, bkg_weights, bkg_labels, bkg_filenames, 
+                    cuts_names, skip_cut=None, output_folder=None):
+    # Work on copies
+    s_ev, s_w, s_true, s_lab, s_fnames = sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames
+    b_ev, b_w, b_lab, b_fnames = bkg_events, bkg_weights, bkg_labels, bkg_filenames
+
+    absolute_sig, absolute_bkg = [len(s_ev)], [len(b_ev)]
+    normalized_sig, normalized_bkg = [s_w.sum()], [b_w.sum()]
+
+    for index, name in enumerate(cuts_names):
+        cutfunc = next((func for n, func in cuts if n == name), None)
+        short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+        if cutfunc is None:
+            continue
+        if skip_cut is not None and name == skip_cut:
+            continue
+        idx_s, idx_b = cutfunc(s_ev, b_ev)
+        s_ev = s_ev[idx_s]
+        s_w = s_w[idx_s]
+        if len(s_true) > 0:
+            s_true = s_true[idx_s]
+        s_lab = s_lab[idx_s]
+        s_fnames = [s_fnames[i] for i in idx_s]
+        b_ev = b_ev[idx_b]
+        b_w = b_w[idx_b]
+        b_lab = b_lab[idx_b]
+        b_fnames = [b_fnames[i] for i in idx_b]
+
+        absolute_sig.append(len(s_ev))
+        absolute_bkg.append(len(b_ev))
+        normalized_sig.append(s_w.sum())
+        normalized_bkg.append(b_w.sum())
+        # print(f"After cut {name}: N signal events = {len(s_ev)}, N background events = {len(b_ev)}, N MC events = {len(mc_ev)}")
+    with open(os.path.join(output_folder, "cut_table_absolute.txt"), "w") as f:
+        # setup a latex table
+        f.write("\\begin{tabular}{|c|c|c|}\n")
+        f.write("\\hline\n")
+        f.write("Cut & Signal Events & Background Events \\\\\n")
+        f.write("\\hline\n")
+        f.write(f"Initial & {absolute_sig[0]} & {absolute_bkg[0]} \\\\\n")
+        for index, name in enumerate(cuts_names):
+            short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+            f.write(f"{short_name} & {absolute_sig[index+1]} & {absolute_bkg[index+1]} \\\\\n")
+        f.write("\\hline\n")
+        f.write("\\end{tabular}\n")
+    with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
+        # setup a latex table
+        f.write("\\begin{tabular}{|c|c|c|}\n")
+        f.write("\\hline\n")
+        f.write("Cut & Signal Events & Background Events \\\\\n")
+        f.write("\\hline\n")
+        f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} \\\\\n")
+        for index, name in enumerate(cuts_names):
+            short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} \\\\\n")
+        f.write("\\hline\n")
+        f.write("\\end{tabular}\n")
+
+
+    return s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames
 
 
 

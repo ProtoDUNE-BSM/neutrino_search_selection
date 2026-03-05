@@ -1,48 +1,21 @@
 {
     "folders": {
-        "mother_folder_signal": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal",
-        "mother_folder_bkg": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal",
+        "mother_folder_data": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal",
         "mother_folder_mc": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal/11890",
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data"
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_mc_data"
     },
     "analysis": {
         "apply_cuts": true,
         "nbins": 40,
         "TP_RATE": "all"
     },
-    "signal": {
+    "data": {
         "SPILL_STATUS": "on",
         "label": "On spill data",
         "GET_TRUTH": false,
         "WEIGHT_MODE": "1hour",
         "USE_COMBINED": true,
         "TP_RATE": "all",
-        "tp_monitor_files":[
-            "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29424.csv",
-            "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29425.csv"
-        ],
-        "run_parameters":{
-            "spill_on":{
-                "total_POT":3.936E16,
-                "total_time": 16.54001
-            },
-            "spill_off":{
-                "total_POT": 0,
-                "total_time": 44.687323
-            },
-            "spill_all":{
-                "total_POT": 3.936E16,
-                "total_time": 60.783323
-            }
-        }
-    },
-    "bkg": {
-        "SPILL_STATUS": "off",
-        "label": "Off spill data",
-        "GET_TRUTH": false,
-        "WEIGHT_MODE": "1hour",
-        "USE_COMBINED": true,
-        "TP_RATE": "all",  
         "tp_monitor_files":[
             "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29424.csv",
             "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29425.csv"
