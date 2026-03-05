@@ -5,7 +5,9 @@ import sys
 import uproot
 import argparse
 import json
+import csv
 from scipy import stats
+
 
 # import custom libs
 sys.path.append("../python")
@@ -184,107 +186,31 @@ create_table_cuts(sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_l
                     cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base)
 
 
+# get more information about the events passing all cuts
+s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames = apply_all_cuts(
+    sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
+    bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
+    cuts=cuts
+)
 
-
-
-
-
-# ----------------------------------------------
-
-# print("\nN-1 test results (number of events passing all cuts except one):")
-# signal_initial_events = np.sum(sig_weights_orig)
-# background_initial_events = np.sum(bkg_weights_orig)
-# mc_initial_events = np.sum(mc_weights_orig)
-# print()
-
-
-# # ----------------------------------------------
-# # N-n test: 
-# cuts_copy = cuts.copy()
-# signal_remaining_events = [np.sum(sig_weights_orig)]
-# background_remaining_events = [np.sum(bkg_weights_orig)]
-
-# # apply all cuts first
-# s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames = apply_all_cuts(
-#     sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
-#     bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
-#     parameters, cuts=cuts_copy
-# )
-# # # apply cuts with MC
-# # s_ev_mc, s_w_mc, s_true_mc, s_lab_mc, s_fnames_mc, b_ev_mc, b_w_mc, b_lab_mc, b_fnames_mc, mc_ev_mc, mc_w_mc, mc_true_mc, mc_lab_mc, mc_fnames_mc = apply_all_cuts_MC(
-# #     sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
-# #     bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
-# #     mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
-# #     parameters, cuts=cuts_with_mc
-# # )
-
-# # exit()
-# passing_events = [np.sum(b_w)]
-# corresponding_s_w_list = [np.sum(s_w)]
-# final_cuts_names = ["all_cuts"]
-# cut_to_remove = "all_cuts"
-# sig_over_bkg_ratio = [corresponding_s_w_list[-1]/passing_events[-1]]
-# while (len(cuts_copy) > 0):
-#     # Remove the cut from the copy
-#     cuts_copy = [cut for cut in cuts_copy if cut[0] != cut_to_remove]
-#     # try all cuts to get the min
-#     min_value = float("inf")
-#     for cut in cuts_copy:
-#         s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames = apply_all_cuts(
-#             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
-#             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
-#             parameters, cuts=cuts_copy, skip_cut=cut[0]
-#         )
-#         if np.sum(b_w) < min_value:
-#             min_value = np.sum(b_w)
-#             corresponding_s_w = np.sum(s_w)
-#             cut_to_remove = cut[0]
-#     passing_events.append(min_value)
-#     corresponding_s_w_list.append(corresponding_s_w)
-#     final_cuts_names.append(shorter_cut_names[cuts_names.index(cut_to_remove)])
-#     sig_over_bkg_ratio.append(corresponding_s_w / min_value)
-
-# # create a table with the results
-# csv_path = os.path.join(output_folder_base, "n_n_test_results_table.csv")
-# with open(csv_path, "w", newline='') as csvfile:
-#     writer = csv.writer(csvfile)
-#     writer.writerow(["Cut", "Bkg Events", "Bkg Error",  "Signal Events", "Sig Error", "Sig/Bkg Ratio"])
-#     for i in range(len(final_cuts_names)):
-#         writer.writerow([
-#             final_cuts_names[i],
-#             f"{passing_events[i]:.2f}",
-#             f"{np.sqrt(passing_events[i]*total_time_with_correct_tps_off)/total_time_with_correct_tps_off:.2f}",
-#             f"{corresponding_s_w_list[i]:.2f}",
-#             f"{np.sqrt(corresponding_s_w_list[i]*total_time_with_correct_tps_on)/total_time_with_correct_tps_on:.2f}",
-#             f"{sig_over_bkg_ratio[i]:.2f}"
-#         ])
-# print(f"\nN-n test results table saved to {csv_path}\n")
-
-# # get more information about the events passing all cuts
-# s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames = apply_all_cuts(
-#     sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
-#     bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
-#     parameters, cuts=cuts
-# )
-
-# # save to file the list of events passing all cuts
-# csv_path = os.path.join(output_folder_base, "events_passing_all_cuts.csv")
-# with open(csv_path, "w", newline='') as csvfile:
-#     writer = csv.writer(csvfile)
-#     writer.writerow(["EventID", "Filename", "IsSignal"])
-#     for i in range(len(s_ev)):
-#         writer.writerow([
-#             int(s_ev[i, aggregate_dict["eventID"]]),
-#             s_fnames[i],
-#             "Signal"
-#         ])
-#     for i in range(len(b_ev)):
-#         writer.writerow([
-#             int(b_ev[i, aggregate_dict["eventID"]]),
-#             b_fnames[i],
-#             "Background"
-#         ])
-# print(f"List of events passing all cuts saved to {csv_path}\n")
+# save to file the list of events passing all cuts
+csv_path = os.path.join(output_folder_base, "events_passing_all_cuts.csv")
+with open(csv_path, "w", newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(["EventID", "Filename", "IsSignal"])
+    for i in range(len(s_ev)):
+        writer.writerow([
+            int(s_ev[i, aggregate_dict["eventID"]]),
+            s_fnames[i],
+            "Signal"
+        ])
+    for i in range(len(b_ev)):
+        writer.writerow([
+            int(b_ev[i, aggregate_dict["eventID"]]),
+            b_fnames[i],
+            "Background"
+        ])
+print(f"List of events passing all cuts saved to {csv_path}\n")
 
 
 
