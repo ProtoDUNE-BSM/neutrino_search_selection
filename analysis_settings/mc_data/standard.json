@@ -10,8 +10,8 @@
         "TP_RATE": "all"
     },
     "data": {
-        "SPILL_STATUS": "on",
-        "label": "On spill data",
+        "SPILL_STATUS": "off",
+        "label": "Off spill data",
         "GET_TRUTH": false,
         "WEIGHT_MODE": "1hour",
         "USE_COMBINED": true,

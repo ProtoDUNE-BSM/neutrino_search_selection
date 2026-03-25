@@ -306,9 +306,10 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
     total_POT_MC = 0
 
     all_folders = []
-    for root, dirs, files in os.walk(folders):
-        for d in dirs:
-            all_folders.append(os.path.join(root, d))
+    for folder in folders:
+        for root, dirs, files in os.walk(folder):
+            for d in dirs:
+                all_folders.append(os.path.join(root, d))
     if all_folders == []:
         all_folders = [folders]
     max_length = max([len(f.split("/")) for f in all_folders])
@@ -614,6 +615,82 @@ def triple_hist_stack(hist_sig, sig_weights, hist_bkg, bkg_weights, hist_mc, mc_
     plt.clf()
     plt.close()
 
+def triple_hist_single(hist_sig, sig_weights, parameters=None, output_folder=None, spill_status="off", plot_name="sig_bkg_energy_spectrum", title="Background vs Signal Energy Spectrum", range=(0, 100), bins=50, xlabel="Energy (GeV)", ylabel="Counts", label_sig = "Signal", label_bkg = "Background", total_time_with_correct_tps_on=(2.93733+5.5266)):
+    color_sig = "orange"
+   
+    # Step 1: Compare energy spectrums between signal off spill and background
+    output_folder_normalized = output_folder+"/output_test_normalized/"
+    output_folder_absolute = output_folder+"/output_test_absolute/"
+    output_folder_1hour = output_folder+"/output_test_1hour/"
+    output_folder_full_time = output_folder+"/output_test_full_time/"
+
+    hist_sig_pure, hist_sig_pure_bins = np.histogram(hist_sig, bins=bins, range=range)
+    # Compute the errors
+    hist_sig_errors_absolute = np.sqrt(hist_sig_pure)
+    hist_sig_errors_normalized = hist_sig_errors_absolute / hist_sig_pure.sum() if hist_sig_pure.sum() > 0 else 0
+    hist_sig_errors_1hour = hist_sig_errors_absolute * sig_weights[0]
+
+    bin_width = (range[1] - range[0]) / bins
+
+    plt.figure(figsize=(9, 6))
+
+    normalization_sig = sig_weights.sum() if sig_weights.sum() > 0 else 1
+
+    plt.hist(hist_sig, bins=bins, label=label_sig, density=False, range=range, color=color_sig, alpha = 0.5, weights=sig_weights/normalization_sig)
+    plt.hist(hist_sig, bins=bins, density=False, range=range, histtype='step', color=color_sig, weights=sig_weights/normalization_sig)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(f"{title}: Normalized.")
+    plt.legend()
+    plt.grid()
+    plt.savefig(os.path.join(output_folder_normalized, f"{plot_name}_normalized.png"))
+    plt.clf()
+
+    plt.hist(hist_sig, bins=bins, label=label_sig, density=False, range=range, color=color_sig, alpha=0.5)
+    plt.hist(hist_sig, bins=bins, density=False, range=range, histtype='step', color=color_sig)
+    # add error bars
+    plt.errorbar(hist_sig_pure_bins[:-1]+bin_width*0.5, hist_sig_pure, yerr=hist_sig_errors_absolute, fmt='none', ecolor='black', capsize=5)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(f"{title}: Absolute.")
+    plt.legend()
+    plt.grid()
+    plt.savefig(os.path.join(output_folder_absolute, f"{plot_name}_absolute.png"))
+    plt.clf()
+
+    plt.hist(hist_sig, bins=bins, label=label_sig, density=False, range=range, weights=sig_weights, color=color_sig, alpha=0.5)
+    plt.hist(hist_sig, bins=bins, density=False, range=range, histtype='step', color=color_sig, weights=sig_weights)
+    # add error bars
+    plt.errorbar(hist_sig_pure_bins[:-1]+bin_width*0.5, hist_sig_pure * sig_weights[0], yerr=hist_sig_errors_1hour, fmt='none', ecolor='black', capsize=5)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(f"{title}: 1 hour.")
+    plt.legend()
+    plt.grid()
+    plt.savefig(os.path.join(output_folder_1hour, f"{plot_name}_1hour.png"))
+    plt.clf()
+
+    
+    sig_weights_full = sig_weights * total_time_with_correct_tps_on
+    hist_sig_pure, hist_sig_pure_bins = np.histogram(hist_sig, bins=bins, range=range)
+    hist_sig_errors_absolute = np.sqrt(hist_sig_pure)
+    hist_sig_errors_full = hist_sig_errors_absolute * sig_weights_full[0]
+
+
+    plt.hist(hist_sig, bins=bins, label=label_sig, density=False, range=range, weights=sig_weights_full, color=color_sig, alpha=0.5)
+    plt.hist(hist_sig, bins=bins, density=False, range=range, histtype='step', color=color_sig, weights=sig_weights_full)
+    # add error bars
+    plt.errorbar(hist_sig_pure_bins[:-1]+bin_width*0.5, hist_sig_pure * sig_weights_full[0], yerr=hist_sig_errors_full, fmt='none', ecolor='black', capsize=2)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(f"{title}: Full data time.")
+    plt.legend()
+    plt.grid()
+    plt.savefig(os.path.join(output_folder_full_time, f"{plot_name}_full_sig_time.png"))
+    plt.clf()
+    plt.close()
+
+
 
 
 def apply_all_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
@@ -678,6 +755,24 @@ def apply_all_cuts_MC( sig_events, sig_weights, sig_true_events, sig_labels, sig
         # print(f"After cut {name}: N signal events = {len(s_ev)}, N background events = {len(b_ev)}, N MC events = {len(mc_ev)}")
 
     return s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames, mc_ev, mc_w, mc_true, mc_lab, mc_fnames
+
+
+def apply_all_cuts_single( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
+                cuts, skip_cut=None):
+
+    s_ev, s_w, s_true, s_lab, s_fnames = sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames
+    for name, cutfunc in cuts:
+        if skip_cut is not None and name == skip_cut:
+            continue
+        idx_s = cutfunc(s_ev)
+        s_ev = s_ev[idx_s]
+        s_w = s_w[idx_s]
+        if len(s_true) > 0:
+            s_true = s_true[idx_s]
+        s_lab = s_lab[idx_s]
+        s_fnames = [s_fnames[i] for i in idx_s]
+        
+    return s_ev, s_w, s_true, s_lab, s_fnames
 
 
 
@@ -800,21 +895,86 @@ def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig
             f.write(f"{short_name} & {absolute_sig[index+1]} & {absolute_bkg[index+1]} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
+    # with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
+    #     # setup a latex table
+    #     f.write("\\begin{tabular}{|c|c|c|}\n")
+    #     f.write("\\hline\n")
+    #     f.write("Cut & Signal Events & Background Events \\\\\n")
+    #     f.write("\\hline\n")
+    #     f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} \\\\\n")
+    #     for index, name in enumerate(cuts_names):
+    #         short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+    #         f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} \\\\\n")
+    #     f.write("\\hline\n")
+    #     f.write("\\end{tabular}\n")
     with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
         # setup a latex table
-        f.write("\\begin{tabular}{|c|c|c|}\n")
+        f.write("\\begin{tabular}{|c|c|c|c|c|}\n")
         f.write("\\hline\n")
-        f.write("Cut & Signal Events & Background Events \\\\\n")
+        f.write("Cut & Signal Events & Background Events & Efficiency & Purity \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} \\\\\n")
+        f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} & {100*normalized_sig[0]/(normalized_sig[0] + 1e-8):.2f}% & {100*normalized_sig[0]/(normalized_sig[0] +normalized_bkg[0] + 1e-8):.2f}% \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} \\\\\n")
+            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} & {100*normalized_sig[index+1]/(normalized_sig[0] + 1e-8):.2f}% & {100*normalized_sig[index+1]/(normalized_sig[index+1] + normalized_bkg[index+1] + 1e-8):.2f}% \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
 
-
     return s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames
+
+
+def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
+                    cuts_names, skip_cut=None, output_folder=None):
+    # Work on copies
+    s_ev, s_w, s_true, s_lab, s_fnames = sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames
+
+    absolute_sig = [len(s_ev)] 
+    normalized_sig = [s_w.sum()]
+
+    for index, name in enumerate(cuts_names):
+        cutfunc = next((func for n, func in cuts_single if n == name), None)
+        short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+        if cutfunc is None:
+            continue
+        if skip_cut is not None and name == skip_cut:
+            continue
+        idx_s = cutfunc(s_ev)
+        s_ev = s_ev[idx_s]
+        s_w = s_w[idx_s]
+        if len(s_true) > 0:
+            s_true = s_true[idx_s]
+        s_lab = s_lab[idx_s]
+        s_fnames = [s_fnames[i] for i in idx_s]
+
+        absolute_sig.append(len(s_ev))
+        normalized_sig.append(s_w.sum())
+        # print(f"After cut {name}: N signal events = {len(s_ev)}, N background events = {len(b_ev)}, N MC events = {len(mc_ev)}")
+    with open(os.path.join(output_folder, "cut_table_absolute.txt"), "w") as f:
+        # setup a latex table
+        f.write("\\begin{tabular}{|c|c|}\n")
+        f.write("\\hline\n")
+        f.write("Cut & Run Events \\\\\n")
+        f.write("\\hline\n")
+        f.write(f"Initial & {absolute_sig[0]} \\\\\n")
+        for index, name in enumerate(cuts_names):
+            short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+            f.write(f"{short_name} & {absolute_sig[index+1]} \\\\\n")
+        f.write("\\hline\n")
+        f.write("\\end{tabular}\n")
+    with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
+        # setup a latex table
+        f.write("\\begin{tabular}{|c|c|}\n")
+        f.write("\\hline\n")
+        f.write("Cut & Signal Events \\\\\n")
+        f.write("\\hline\n")
+        f.write(f"Initial & {normalized_sig[0]:.2f} \\\\\n")
+        for index, name in enumerate(cuts_names):
+            short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} \\\\\n")
+        f.write("\\hline\n")
+        f.write("\\end{tabular}\n")
+
+    return s_ev, s_w, s_true, s_lab, s_fnames
 
 
 

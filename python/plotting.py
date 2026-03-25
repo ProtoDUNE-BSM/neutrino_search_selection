@@ -843,7 +843,7 @@ def run_all_triple_hist_stack(
     sig_events, sig_weights, bkg_events, bkg_weights, mc_events, mc_weights,
     output_folder_base, label_sig, label_bkg, nbins, spill_status=f"spill_status",
     apply_cuts=False, cuts=cuts, total_time_with_correct_tps_on=(2.93733+5.5266)
-):
+    ):
     sig_events_orig = sig_events.copy()
     sig_weights_orig = sig_weights.copy()
     sig_true_events_orig = np.ones((sig_events.shape[0], 1)) * -1
@@ -1644,6 +1644,485 @@ def run_all_triple_hist_stack(
         total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
 
+def run_all_triple_hist_single(
+    sig_events, sig_weights, output_folder_base, label_sig, nbins, 
+    spill_status="spill_status", apply_cuts=False, cuts=cuts_single,
+    total_time_with_correct_tps_on=(2.93733+5.5266)
+    ):
+    """
+    Plot histograms for a single run dataset.
+    
+    Parameters:
+    - sig_events, sig_weights: event data and weights for the run
+    - output_folder_base: output directory for plots
+    - label_sig: label for the dataset
+    - nbins: number of bins for histograms
+    - spill_status: spill status string
+    - apply_cuts: whether to apply cuts before plotting
+    - cuts: cuts to apply (from cuts_single)
+    - total_time_with_correct_tps_on: time scaling factor
+    """
+    
+    sig_events_orig = sig_events.copy()
+    sig_weights_orig = sig_weights.copy()
+    sig_true_events_orig = np.ones((sig_events.shape[0], 1)) * -1
+    sig_labels_orig = np.zeros((sig_events.shape[0], 1))
+    sig_filenames_orig = np.zeros((sig_events.shape[0], 1))
+    
+    # Helper function for applying cuts
+    def apply_cuts_if_needed(events, weights, true_events, labels, filenames, skip_cut=None):
+        if apply_cuts:
+            return apply_all_cuts_single(
+                events, weights, true_events, labels, filenames,
+                cuts=cuts, skip_cut=skip_cut
+            )
+        else:
+            return events, weights, true_events, labels, filenames
+    
+    # ============================================================
+    # Step 1: Energy spectrum
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut=None
+    )
 
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["reconstructedEnergy"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="energy_spectrum",
+        title=f"{label_sig} Energy Spectrum",
+        range=(0, 100),
+        bins=nbins,
+        xlabel="Energy (GeV)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
 
+    # ============================================================
+    # Step 2: Direction spectra
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="max_directionZ"
+    )
+
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["directionX"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="directionX_spectrum",
+        title=f"{label_sig} Direction X Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="Direction X",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["directionY"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="directionY_spectrum",
+        title=f"{label_sig} Direction Y Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="Direction Y",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["directionZ"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="directionZ_spectrum",
+        title=f"{label_sig} Direction Z Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="Direction Z",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    # Direction 2 components
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["directionX2"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="directionX2_spectrum",
+        title=f"{label_sig} Direction X2 Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="Direction X2",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["directionY2"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="directionY2_spectrum",
+        title=f"{label_sig} Direction Y2 Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="Direction Y2",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["directionZ2"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="directionZ2_spectrum",
+        title=f"{label_sig} Direction Z2 Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="Direction Z2",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    # ============================================================
+    # Step 3: Max direction spectrum
+    # ============================================================
+    triple_hist_single(
+        hist_sig=np.maximum(
+            sig_events[:, aggregate_dict["directionZ"]],
+            sig_events[:, aggregate_dict["directionZ2"]]
+        ),
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="max_directionZ_directionZ2_spectrum",
+        title=f"{label_sig} $\\cos(\\theta_{{\\mathrm{{beam}}}})_{{\\mathrm{{max}}}}$ Spectrum",
+        range=(-1, 1),
+        bins=nbins,
+        xlabel="$\\cos(\\theta_{\\mathrm{beam}})_{{\\mathrm{{max}}}}$",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    # Print and save max direction histogram
+    hist_sig_max, bin_sig_max = np.histogram(
+        np.maximum(
+            sig_events[:, aggregate_dict["directionZ"]],
+            sig_events[:, aggregate_dict["directionZ2"]]
+        ),
+        bins=80,
+        range=(-1, 1),
+        weights=sig_weights
+    )
+    print("Hist signal:", hist_sig_max)
+    print("Bin signal:", bin_sig_max)
+    
+    with open(os.path.join(output_folder_base, "max_directionZ_directionZ2.txt"), "w") as f:
+        f.write("Bin edges:\n")
+        f.write(", ".join([str(b) for b in bin_sig_max]) + "\n")
+        f.write("Signal histogram:\n")
+        f.write(", ".join([str(h) for h in hist_sig_max]) + "\n")
+
+    # 2D direction plot
+    plt.figure(figsize=(8, 6))
+    plt.hist2d(
+        sig_events[:, aggregate_dict["directionZ"]],
+        sig_events[:, aggregate_dict["directionZ2"]],
+        weights=sig_weights,
+        bins=nbins,
+        range=[[-1, 1], [-1, 1]],
+        cmap='viridis',
+        label=label_sig,
+        cmin=0.001
+    )
+    plt.colorbar(label='Counts')
+    plt.xlabel('$\\cos(\\theta_{{\\mathrm{{beam}}}})$ Hits')
+    plt.ylabel('$\\cos(\\theta_{{\\mathrm{{beam}}}})$ PFP')
+    plt.title(f"{label_sig} $\\cos(\\theta_{{\\mathrm{{beam}}}})$ Hits vs $\\cos(\\theta_{{\\mathrm{{beam}}}})$ PFP")
+    plt.savefig(os.path.join(output_folder_base, "directionZ_vs_directionZ2.png"))
+    plt.close()
+
+    # Direction comparison plot
+    plt.figure(figsize=(8, 6))
+    plt.hist(
+        sig_events[:, aggregate_dict["directionZ"]],
+        bins=nbins,
+        range=(-1, 1),
+        weights=sig_weights/np.sum(sig_weights),
+        alpha=0.4,
+        label=f"{label_sig} $\\cos(\\theta_{{\\mathrm{{beam}}}})$ Hits",
+        color='blue',
+    )
+    plt.hist(
+        sig_events[:, aggregate_dict["directionZ2"]],
+        bins=nbins,
+        range=(-1, 1),
+        weights=sig_weights/np.sum(sig_weights),
+        alpha=0.4,
+        label=f"{label_sig} $\\cos(\\theta_{{\\mathrm{{beam}}}})$ PFP",
+        color='green',
+    )
+    plt.hist(
+        np.maximum(
+            sig_events[:, aggregate_dict["directionZ"]],
+            sig_events[:, aggregate_dict["directionZ2"]]
+        ),
+        bins=nbins,
+        range=(-1, 1),
+        weights=sig_weights/np.sum(sig_weights),
+        alpha=0.4,
+        label=f"{label_sig} $\\cos(\\theta_{{\\mathrm{{beam}}}})_{{\\mathrm{{max}}}}$",
+        color='red',
+    )
+    plt.xlabel('$\\cos(\\theta_{\\mathrm{beam}})$')
+    plt.ylabel('Counts')
+    plt.title(f"{label_sig} $\\cos(\\theta_{{\\mathrm{{beam}}}})$ Hits, PFP and Max")
+    plt.legend()
+    plt.savefig(os.path.join(output_folder_base, "direction_histograms.png"))
+    plt.close()
+
+    # ============================================================
+    # Step 4: Energy deposited in different segments
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="energy_first10cm"
+    )
+
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["energyDepositedInFirst10cm"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="energyDepositedInFirst10cm_spectrum",
+        title=f"{label_sig} Energy in First 10cm ($C_{{0-10}}$)",
+        range=(100, 100000),
+        bins=nbins,
+        xlabel="$C_{{0-10}}$ (MeV)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="energy_fifth10cm"
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["energyDepositedInFifth10cm"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="energyDepositedInFifth10cm_spectrum",
+        title=f"{label_sig} Energy in Fifth 10cm ($C_{{40-50}}$)",
+        range=(100, 100000),
+        bins=nbins,
+        xlabel="$C_{{40-50}}$ (MeV)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="energy_fifteenth10cm"
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["energyDepositedInFifteenth10cm"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="energyDepositedInFifteenth10cm_spectrum",
+        title=f"{label_sig} Energy in Fifteenth 10cm ($C_{{140-150}}$)",
+        range=(100, 100000),
+        bins=nbins,
+        xlabel="$C_{{140-150}}$ (MeV)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    # ============================================================
+    # Step 5: ROI properties
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="ROI_Z_size"
+    )
+    
+    triple_hist_single(
+        hist_sig=(sig_events[:, aggregate_dict["zROIEnd"]]-sig_events[:, aggregate_dict["zROIStart"]])*cut_thresholds["roi_z_scale_factor"],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="ROI_Z_size_spectrum",
+        title=f"{label_sig} ROI Z Size",
+        range=(0, 460),
+        bins=nbins,
+        xlabel="ROI Size Z (cm)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="ROI_Z_starting_point_close_to_vertexZ"
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["zROIStart"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="ROI_Z_start_spectrum",
+        title=f"{label_sig} ROI Z Start Position",
+        range=(0, 100),
+        bins=nbins,
+        xlabel="ROI Z Start (scale units)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    triple_hist_single(
+        hist_sig=np.abs(sig_events[:, aggregate_dict["vertexZ"]] - sig_events[:, aggregate_dict["zROIStart"]]*cut_thresholds["roi_z_scale_factor"]),
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="vertex_ROI_distance_spectrum",
+        title=f"{label_sig} Distance between Vertex Z and ROI Z Start",
+        range=(0, 100),
+        bins=nbins,
+        xlabel="Distance (cm)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    # ============================================================
+    # Step 6: Neutrino tail
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="Neutrino_Tail_Length_Density"
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="neutrino_tail_length_spectrum",
+        title=f"{label_sig} Length of Neutrino Tail",
+        range=(-2, 460),
+        bins=nbins,
+        xlabel="Length of Neutrino Tail (cm)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]]/(sig_events[:, aggregate_dict["zROIStart"]]*cut_thresholds["roi_z_scale_factor"]),
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="neutrino_tail_density_spectrum",
+        title=f"{label_sig} Density of Neutrino Tail",
+        range=(0, 1),
+        bins=nbins,
+        xlabel="Tail Density ",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    # ============================================================
+    # Step 7: Vertex position
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut=None
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["vertexX"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="vertexX_spectrum",
+        title=f"{label_sig} Vertex X Position",
+        range=(0, 600),
+        bins=nbins,
+        xlabel="Vertex X (cm)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["vertexY"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="vertexY_spectrum",
+        title=f"{label_sig} Vertex Y Position",
+        range=(0, 600),
+        bins=nbins,
+        xlabel="Vertex Y (cm)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["vertexZ"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="vertexZ_spectrum",
+        title=f"{label_sig} Vertex Z Position",
+        range=(0, 460),
+        bins=nbins,
+        xlabel="Vertex Z (cm)",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    # ============================================================
+    # Step 8: Number of particles
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut="daughter_particles"
+    )
+    
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["numberOfPFParticles"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="numberOfPFParticles_spectrum",
+        title=f"{label_sig} Number of PFParticles",
+        range=(0, 25),
+        bins=25,
+        xlabel="Number of PFParticles",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
+    print(f"Finished plotting for {label_sig}")
 
