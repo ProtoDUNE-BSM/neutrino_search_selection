@@ -48,7 +48,8 @@ aggregate_dict = {
     "directionX2": 44,
     "directionY2": 45,
     "directionZ2": 46,
-    "numberOfHitsInMuonRegion": 47
+    "lengthOfMuonTrack": 47,
+    "numberOfHitsInSlice": 48
 }
 true_dict= {
     "eventID": 0,

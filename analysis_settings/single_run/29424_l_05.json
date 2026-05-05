@@ -1,14 +1,9 @@
 {
     "folders": {
         "mother_folder_run": [
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15073",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15074",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15075",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15076",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15078",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15102"
+            "/pnfs/dune/scratch/users/dpullia/2026/29424_l_05"
         ],
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/29424_spill_on/"
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/29424_l_05/"
     },
     "analysis": {
         "apply_cuts": false,
@@ -46,5 +41,5 @@
         "total_time_low_tp_rate": 8.46393,
         "total_time_all_tp_rate": 7.657333
     },
-    "events_target":[5408, 60582, 24584, 21186, 42646, 22013, 68237, 56531, 1248, 2914, 15535, 21419, 74839, 80655, 71703, 32490, 48973, 43195, 74522, 71790, 52397, 82636, 54899, 61403, 76517, 76250, 85110, 32613, 99335, 44003, 73228]
+    "events_target":[5408, 60582, 24584, 21186, 42646, 22013, 68237, 56531, 1248, 2914, 15535, 21419, 74839, 80655, 71703]
 }

@@ -165,6 +165,10 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
                 directionY2 = tree["directionY2"].array()
                 directionZ2 = tree["directionZ2"].array()
                 lengthOfMuonTrack = tree["lengthOfMuonTrack"].array()
+                try:
+                    numberOfHitsInSlice = tree["numberOfHitsInSlice"].array()
+                except:
+                    numberOfHitsInSlice = np.array([0] * len(eventIDs))
                 # create a numpy array of events
                 event = np.array([
                     eventIDs, vertexX, vertexY, vertexZ, reconstructedEnergy, directionX, directionY, directionZ,
@@ -179,7 +183,7 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
                     energyDepositedInFirst10cmBefore, energyDepositedInSecond10cmBefore, zROIStart, zROIEnd,
                     timeROIStart, timeROIEnd, timeFitMean, timeFitSigma,
                     directionX2, directionY2, directionZ2,
-                    lengthOfMuonTrack
+                    lengthOfMuonTrack, numberOfHitsInSlice
                 ])
                 if (len(eventIDs)==0):
                     print(f"Warning: empty event in file {file}, skipping")
@@ -616,6 +620,12 @@ def triple_hist_stack(hist_sig, sig_weights, hist_bkg, bkg_weights, hist_mc, mc_
     plt.close()
 
 def triple_hist_single(hist_sig, sig_weights, parameters=None, output_folder=None, spill_status="off", plot_name="sig_bkg_energy_spectrum", title="Background vs Signal Energy Spectrum", range=(0, 100), bins=50, xlabel="Energy (GeV)", ylabel="Counts", label_sig = "Signal", label_bkg = "Background", total_time_with_correct_tps_on=(2.93733+5.5266)):
+    # step 0: make sure it's not empty
+    if len(hist_sig) == 0:
+        print("Warning: empty histogram for signal, skipping plotting")
+        return
+        
+
     color_sig = "orange"
    
     # Step 1: Compare energy spectrums between signal off spill and background
@@ -924,12 +934,18 @@ def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig
 
 
 def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
-                    cuts_names, skip_cut=None, output_folder=None):
+                    cuts_names, skip_cut=None, output_folder=None, events_target=None):
     # Work on copies
     s_ev, s_w, s_true, s_lab, s_fnames = sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames
 
     absolute_sig = [len(s_ev)] 
     normalized_sig = [s_w.sum()]
+    events_target_present_list = []
+    if events_target is not None:
+        # get the list of the intersection of events_target and s_ev[aggregate_dict["eventID"]]
+        events_target_present = list(set(events_target) & set(s_ev[:, aggregate_dict["eventID"]]))
+        print(f"Events target present in signal: {len(events_target_present)} out of {len(events_target)}")
+        events_target_present_list.append(events_target_present)
 
     for index, name in enumerate(cuts_names):
         cutfunc = next((func for n, func in cuts_single if n == name), None)
@@ -948,6 +964,10 @@ def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labe
 
         absolute_sig.append(len(s_ev))
         normalized_sig.append(s_w.sum())
+        if events_target is not None:
+            events_target_present = list(set(events_target) & set(s_ev[:, aggregate_dict["eventID"]]))
+            print(f"After cut {name}: Events target present in signal: {len(events_target_present)} out of {len(events_target)}")
+            events_target_present_list.append(events_target_present)
         # print(f"After cut {name}: N signal events = {len(s_ev)}, N background events = {len(b_ev)}, N MC events = {len(mc_ev)}")
     with open(os.path.join(output_folder, "cut_table_absolute.txt"), "w") as f:
         # setup a latex table
@@ -973,8 +993,107 @@ def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labe
             f.write(f"{short_name} & {normalized_sig[index+1]:.2f} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
-
+    if events_target is not None:
+        with open(os.path.join(output_folder, "events_target_present.txt"), "w") as f:
+            # setup a latex table
+            f.write(f"Initial: {len(events_target_present_list[0])} events present. List: {events_target_present_list[0]}\n")
+            for index, name in enumerate(cuts_names):
+                short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
+                f.write(f"{short_name}: {len(events_target_present_list[index+1])} events present. List: {events_target_present_list[index+1]}\n")
     return s_ev, s_w, s_true, s_lab, s_fnames
+
+def dump_information_events_single( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
+                    cuts_names, skip_cut=None, output_folder=None, events_target=None):
+    # Work on copies
+    s_ev, s_w, s_true, s_lab, s_fnames = sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames
+
+    # dump information of event target before cuts
+    events_target_present_list = []
+    if events_target is not None:
+        # get the list of the intersection of events_target and s_ev[aggregate_dict["eventID"]]
+        events_target_present = list(set(events_target) & set(s_ev[:, aggregate_dict["eventID"]]))
+        print(f"Events target present in signal: {len(events_target_present)} out of {len(events_target)}")
+        events_target_present_list.append(events_target_present)
+        with open(os.path.join(output_folder, "full_information_events_targets.txt"), "w") as f:
+            for event_id in events_target_present:
+                f.write(f"Event ID: {event_id}\n")
+                event = s_ev[s_ev[:, aggregate_dict["eventID"]] == event_id][0]
+                vertexX = event[aggregate_dict["vertexX"]]
+                vertexY = event[aggregate_dict["vertexY"]]
+                vertexZ = event[aggregate_dict["vertexZ"]]
+                directionX = event[aggregate_dict["directionX"]]
+                directionY = event[aggregate_dict["directionY"]]
+                directionZ = event[aggregate_dict["directionZ"]]
+                directionX2 = event[aggregate_dict["directionX2"]]
+                directionY2 = event[aggregate_dict["directionY2"]]
+                directionZ2 = event[aggregate_dict["directionZ2"]]
+                numberOfPFParticles = event[aggregate_dict["numberOfPFParticles"]]
+                energy_first10cm = event[aggregate_dict["energyDepositedInFirst10cm"]]
+                energy_fifth10cm = event[aggregate_dict["energyDepositedInFifth10cm"]]
+                energy_fifteenth10cm = event[aggregate_dict["energyDepositedInFifteenth10cm"]]
+                zROIEnd = event[aggregate_dict["zROIEnd"]]
+                zROIStart = event[aggregate_dict["zROIStart"]]
+                lengthOfMuonTrack = event[aggregate_dict["lengthOfMuonTrack"]]
+                numberOfHitsInSlice = event[aggregate_dict["numberOfHitsInSlice"]]
+                f.write(f"Vertex: ({vertexX}, {vertexY}, {vertexZ})\n")
+                f.write(f"Direction: ({directionX}, {directionY}, {directionZ})\n")
+                f.write(f"Direction2: ({directionX2}, {directionY2}, {directionZ2})\n")
+                f.write(f"Number of PFParticles: {numberOfPFParticles}\n")
+                f.write(f"Energy deposited in first 10cm: {energy_first10cm}\n")
+                f.write(f"Energy deposited in fifth 10cm: {energy_fifth10cm}\n")
+                f.write(f"Energy deposited in fifteenth 10cm: {energy_fifteenth10cm}\n")
+                f.write(f"zROI: ({zROIStart}, {zROIEnd})\n")
+                f.write(f"Length of muon track: {lengthOfMuonTrack}\n")
+                f.write(f"Number of hits in slice: {numberOfHitsInSlice}\n")
+                f.write(f"------------------------------\n")
+
+    # apply all cuts
+    s_ev, s_w, s_true, s_lab, s_fnames = apply_all_cuts_single(s_ev, s_w, s_true, s_lab, s_fnames, cuts=cuts_single, skip_cut=skip_cut)
+    # dump the information of the events passing the cuts into a txt file
+    with open(os.path.join(output_folder, "full_information_events_passing_cuts.txt"), "w") as f:
+        for event in s_ev:
+            f.write(f"------------------------------\n")
+            event_id = event[aggregate_dict["eventID"]]
+            # dump all the information used for the cuts
+            vertexX = event[aggregate_dict["vertexX"]]
+            vertexY = event[aggregate_dict["vertexY"]]
+            vertexZ = event[aggregate_dict["vertexZ"]]
+            directionX = event[aggregate_dict["directionX"]]
+            directionY = event[aggregate_dict["directionY"]]
+            directionZ = event[aggregate_dict["directionZ"]]
+            directionX2 = event[aggregate_dict["directionX2"]]
+            directionY2 = event[aggregate_dict["directionY2"]]
+            directionZ2 = event[aggregate_dict["directionZ2"]]
+            numberOfPFParticles = event[aggregate_dict["numberOfPFParticles"]]
+            energy_first10cm = event[aggregate_dict["energyDepositedInFirst10cm"]]
+            energy_fifth10cm = event[aggregate_dict["energyDepositedInFifth10cm"]]
+            energy_fifteenth10cm = event[aggregate_dict["energyDepositedInFifteenth10cm"]]
+            zROIEnd = event[aggregate_dict["zROIEnd"]]
+            zROIStart = event[aggregate_dict["zROIStart"]]
+            lengthOfMuonTrack = event[aggregate_dict["lengthOfMuonTrack"]]
+            numberOfHitsInSlice = event[aggregate_dict["numberOfHitsInSlice"]]
+            numberOfHits = event[aggregate_dict["numberOfHits"]]
+            # now write all the information into the txt file
+            f.write(f"Event ID: {event_id}\n")
+            f.write(f"Vertex: ({vertexX}, {vertexY}, {vertexZ})\n")
+            f.write(f"Direction: ({directionX}, {directionY}, {directionZ})\n")
+            f.write(f"Direction2: ({directionX2}, {directionY2}, {directionZ2})\n")
+            f.write(f"Number of PFParticles: {numberOfPFParticles}\n")
+            f.write(f"Energy deposited in first 10cm: {energy_first10cm}\n")
+            f.write(f"Energy deposited in fifth 10cm: {energy_fifth10cm}\n")
+            f.write(f"Energy deposited in fifteenth 10cm: {energy_fifteenth10cm}\n")
+            f.write(f"zROI: ({zROIStart}, {zROIEnd})\n")
+            f.write(f"Length of muon track: {lengthOfMuonTrack}\n")
+            f.write(f"Number of hits in slice: {numberOfHitsInSlice}\n")
+            f.write(f"Number of hits associated to the PFPs: {numberOfHits}\n")
+            # also write the information of whether the event is in the events_target
+            if events_target is not None:
+                if event_id in events_target:
+                    f.write(f"This event is in the events_target.\n")
+                else:
+                    f.write(f"This event is NOT in the events_target.\n")
+            f.write(f"------------------------------\n")
+
 
 
 

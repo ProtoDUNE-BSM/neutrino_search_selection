@@ -1,14 +1,9 @@
 {
     "folders": {
         "mother_folder_run": [
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15073",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15074",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15075",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15076",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15078",
-            "/pnfs/dune/scratch/users/dpullia/2026/29424_spill_on/fnal/15102"
+            "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal"
         ],
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/29424_spill_on/"
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/old_wnp04/"
     },
     "analysis": {
         "apply_cuts": false,
@@ -16,8 +11,8 @@
         "TP_RATE": "all"
     },
     "run": {
-        "SPILL_STATUS": "all",
-        "label": "On and off spill data",
+        "SPILL_STATUS": "on",
+        "label": "On spill data",
         "GET_TRUTH": false,
         "WEIGHT_MODE": "1hour",
         "USE_COMBINED": true,

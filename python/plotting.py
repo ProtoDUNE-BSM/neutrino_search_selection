@@ -22,12 +22,26 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 1: Compare energy spectrums between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut=None
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
 
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["reconstructedEnergy"]],
@@ -51,12 +65,26 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # # Step 2: Compare the direction spectrums between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="max_directionZ"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
 
 
     triple_hist(
@@ -345,12 +373,26 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # # Step 2: Compare the energy deposited in the first 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="energy_first10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
 
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFirst10cm"]],
@@ -375,12 +417,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 6: Compare the energy deposited in the fifth 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="energy_fifth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFifth10cm"]],
         sig_weights=sig_weights,
@@ -403,12 +460,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 7: Compare the energy deposited in the sixth 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="energy_sixth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInSixth10cm"]],
         sig_weights=sig_weights,
@@ -430,12 +502,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 9: Compare the energy deposited in the eighth 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="energy_eighth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInEighth10cm"]],
         sig_weights=sig_weights,
@@ -457,12 +544,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 12: Compare the energy deposited in the eleventh 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="energy_eleventh10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInEleventh10cm"]],
         sig_weights=sig_weights,
@@ -484,12 +586,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 14: Compare the energy deposited in the thirteenth 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
         cuts=cuts, skip_cut="energy_thirteenth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInThirteenth10cm"]],
         sig_weights=sig_weights,
@@ -511,12 +628,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 16: Compare the energy deposited in the fifteenth 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="energy_fifteenth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFifteenth10cm"]],
         sig_weights=sig_weights,
@@ -538,12 +670,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 19: Compare ratio of energy deposited in the first 10 cm before the event to the energy deposited in the fifth 10 cm between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="ratio_before_after"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFirst10cmBefore"]]/sig_events[:, aggregate_dict["energyDepositedInFifth10cm"]],
         sig_weights=sig_weights,
@@ -566,12 +713,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 20: Compare the sigma of the time fit between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="timeFitSigma"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["timeFitSigma"]],
         sig_weights=sig_weights,
@@ -593,12 +755,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 20: Compare the ROI size between {label_sig} off spill and {label_bkg}
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_size"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=(sig_events[:, aggregate_dict["zROIEnd"]]-sig_events[:, aggregate_dict["zROIStart"]])*460/100,
         sig_weights=sig_weights,
@@ -620,12 +797,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 22: compare the ROI starting position
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_starting_point"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["zROIStart"]],
         sig_weights=sig_weights,
@@ -648,12 +840,27 @@ def run_all_triple_hist(
         # ----------------------------------------------
     # Step 22: compare the ROI starting position
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_starting_point_close_to_vertexZ"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=np.abs(sig_events[:, aggregate_dict["vertexZ"]] - sig_events[:, aggregate_dict["zROIStart"]]*460/100),
         sig_weights=sig_weights,
@@ -678,16 +885,31 @@ def run_all_triple_hist(
     # Step 23: compare the lenght of neutrino tail and compare the density of neutrino tail
 
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="Neutrino_Tail_Length_Density"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
-        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        hist_sig=sig_events[:, aggregate_dict["lengthOfMuonTrack"]],
         sig_weights=sig_weights,
-        hist_bkg=bkg_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        hist_bkg=bkg_events[:, aggregate_dict["lengthOfMuonTrack"]],
         bkg_weights=bkg_weights,
         
         output_folder=output_folder_base,
@@ -703,9 +925,9 @@ def run_all_triple_hist(
         total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
     triple_hist(
-        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]]/(sig_events[:, aggregate_dict["zROIStart"]]*460/100),
+        hist_sig=sig_events[:, aggregate_dict["lengthOfMuonTrack"]]/(sig_events[:, aggregate_dict["zROIStart"]]*460/100),
         sig_weights=sig_weights,
-        hist_bkg=bkg_events[:, aggregate_dict["numberOfHitsInMuonRegion"]]/(bkg_events[:, aggregate_dict["zROIStart"]]*460/100),
+        hist_bkg=bkg_events[:, aggregate_dict["lengthOfMuonTrack"]]/(bkg_events[:, aggregate_dict["zROIStart"]]*460/100),
         bkg_weights=bkg_weights,
         
         output_folder=output_folder_base,
@@ -724,12 +946,27 @@ def run_all_triple_hist(
     # ----------------------------------------------
     # Step 23: compare vertex position Z vs ROI starting position Z
     if apply_cuts:
-
         sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames, bkg_events, bkg_weights, bkg_labels, bkg_filenames = apply_all_cuts(
             sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig,
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut=None
         )   
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
+
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["vertexX"]],
         sig_weights=sig_weights,
@@ -740,7 +977,7 @@ def run_all_triple_hist(
         spill_status=spill_status,
         plot_name="sig_bkg_vertexX_spectrum",
         title=f"{label_bkg} vs {label_sig}. Vertex X Spectrum",
-        range=(0, 600),
+        range=(-400, 400),
         bins=nbins,
         xlabel="Vertex X (cm)",
         ylabel="Counts",
@@ -792,6 +1029,21 @@ def run_all_triple_hist(
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="daughter_particles"
         )  
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
 
     triple_hist(
         hist_sig=sig_events[:, aggregate_dict["numberOfPFParticles"]],
@@ -819,6 +1071,21 @@ def run_all_triple_hist(
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_starting_point_close_to_vertexZ"
         )  
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b = cutfunc(sig_events_orig, bkg_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+
 
     triple_hist(
         hist_sig=np.abs(sig_events[:, aggregate_dict["vertexZ"]] - sig_events[:, aggregate_dict["zROIStart"]]*460/100),
@@ -870,6 +1137,25 @@ def run_all_triple_hist_stack(
             bkg_events_orig, bkg_weights_orig, bkg_labels_orig, bkg_filenames_orig,
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig, cuts=cuts, skip_cut=None
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
+
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["reconstructedEnergy"]],
@@ -902,6 +1188,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="max_directionZ"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["directionX"]],
@@ -1067,6 +1371,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_first10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFirst10cm"]],
@@ -1099,6 +1421,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_fifth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFifth10cm"]],
@@ -1131,6 +1471,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_sixth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInSixth10cm"]],
@@ -1163,6 +1521,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_eighth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInEighth10cm"]],
@@ -1195,6 +1571,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_eleventh10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInEleventh10cm"]],
@@ -1227,6 +1621,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_thirteenth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInThirteenth10cm"]],
@@ -1259,6 +1671,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="energy_fifteenth10cm"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFifteenth10cm"]],
@@ -1291,6 +1721,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="ratio_before_after"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["energyDepositedInFirst10cmBefore"]] / np.maximum(
@@ -1326,6 +1774,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="timeFitSigma"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["timeFitSigma"]],
@@ -1358,6 +1824,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_size"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=(sig_events[:, aggregate_dict["zROIEnd"]] - sig_events[:, aggregate_dict["zROIStart"]]) * 460 / 100,
@@ -1390,6 +1874,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_starting_point"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["zROIStart"]],
@@ -1422,6 +1924,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="ROI_Z_starting_point_close_to_vertexZ"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=np.abs(sig_events[:, aggregate_dict["vertexZ"]] - sig_events[:, aggregate_dict["zROIStart"]] * 460 / 100),
@@ -1454,13 +1974,31 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="Neutrino_Tail_Length_Density"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
-        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        hist_sig=sig_events[:, aggregate_dict["lengthOfMuonTrack"]],
         sig_weights=sig_weights,
-        hist_bkg=bkg_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        hist_bkg=bkg_events[:, aggregate_dict["lengthOfMuonTrack"]],
         bkg_weights=bkg_weights,
-        hist_mc=mc_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        hist_mc=mc_events[:, aggregate_dict["lengthOfMuonTrack"]],
         mc_weights=mc_weights,
         
         output_folder=output_folder_base,
@@ -1476,11 +2014,11 @@ def run_all_triple_hist_stack(
         total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
     triple_hist_stack(
-        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]] / np.maximum(sig_events[:, aggregate_dict["zROIStart"]] * 460 / 100, 1e-12),
+        hist_sig=sig_events[:, aggregate_dict["lengthOfMuonTrack"]] / np.maximum(sig_events[:, aggregate_dict["zROIStart"]] * 460 / 100, 1e-12),
         sig_weights=sig_weights,
-        hist_bkg=bkg_events[:, aggregate_dict["numberOfHitsInMuonRegion"]] / np.maximum(bkg_events[:, aggregate_dict["zROIStart"]] * 460 / 100, 1e-12),
+        hist_bkg=bkg_events[:, aggregate_dict["lengthOfMuonTrack"]] / np.maximum(bkg_events[:, aggregate_dict["zROIStart"]] * 460 / 100, 1e-12),
         bkg_weights=bkg_weights,
-        hist_mc=mc_events[:, aggregate_dict["numberOfHitsInMuonRegion"]] / np.maximum(mc_events[:, aggregate_dict["zROIStart"]] * 460 / 100, 1e-12),
+        hist_mc=mc_events[:, aggregate_dict["lengthOfMuonTrack"]] / np.maximum(mc_events[:, aggregate_dict["zROIStart"]] * 460 / 100, 1e-12),
         mc_weights=mc_weights,
         
         output_folder=output_folder_base,
@@ -1506,6 +2044,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut=None
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["vertexX"]],
@@ -1601,6 +2157,24 @@ def run_all_triple_hist_stack(
             mc_events_orig, mc_weights_orig, mc_true_events_orig, mc_labels_orig, mc_filenames_orig,
             cuts=cuts, skip_cut="daughter_particles"
         )
+    else:   
+        cut_name = "neutrino_pfp_in_slice"
+        cutfunc = dict(cuts)[cut_name]
+        idx_s, idx_b, idx_mc = cutfunc(sig_events_orig, bkg_events_orig, mc_events_orig)
+        sig_events = sig_events_orig[idx_s]
+        sig_weights = sig_weights_orig[idx_s]
+        if len(sig_true_events_orig) > 0:
+            sig_true_events = sig_true_events_orig[idx_s]
+        sig_labels = sig_labels_orig[idx_s]
+        sig_filenames = [sig_filenames_orig[i] for i in idx_s]
+        bkg_events = bkg_events_orig[idx_b]
+        bkg_weights = bkg_weights_orig[idx_b]
+        bkg_labels = bkg_labels_orig[idx_b]
+        bkg_filenames = [bkg_filenames_orig[i] for i in idx_b]
+        mc_events = mc_events_orig[idx_mc]
+        mc_weights = mc_weights_orig[idx_mc]
+        mc_labels = mc_labels_orig[idx_mc]
+        mc_filenames = [mc_filenames_orig[i] for i in idx_mc]
 
     triple_hist_stack(
         hist_sig=sig_events[:, aggregate_dict["numberOfPFParticles"]],
@@ -1677,6 +2251,16 @@ def run_all_triple_hist_single(
                 cuts=cuts, skip_cut=skip_cut
             )
         else:
+            cut_name = "neutrino_pfp_in_slice"
+            cutfunc = dict(cuts)[cut_name]
+            idx = cutfunc(events)
+            events = events[idx]
+            weights = weights[idx]
+            if len(true_events) > 0:
+                true_events = true_events[idx]
+            labels = labels[idx]
+            filenames = [filenames[i] for i in idx]
+
             return events, weights, true_events, labels, filenames
     
     # ============================================================
@@ -2021,7 +2605,7 @@ def run_all_triple_hist_single(
     )
     
     triple_hist_single(
-        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]],
+        hist_sig=sig_events[:, aggregate_dict["lengthOfMuonTrack"]],
         sig_weights=sig_weights,
         output_folder=output_folder_base,
         spill_status=spill_status,
@@ -2036,7 +2620,7 @@ def run_all_triple_hist_single(
     )
     
     triple_hist_single(
-        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInMuonRegion"]]/(sig_events[:, aggregate_dict["zROIStart"]]*cut_thresholds["roi_z_scale_factor"]),
+        hist_sig=sig_events[:, aggregate_dict["lengthOfMuonTrack"]]/(sig_events[:, aggregate_dict["zROIStart"]]*cut_thresholds["roi_z_scale_factor"]),
         sig_weights=sig_weights,
         output_folder=output_folder_base,
         spill_status=spill_status,
@@ -2064,7 +2648,7 @@ def run_all_triple_hist_single(
         spill_status=spill_status,
         plot_name="vertexX_spectrum",
         title=f"{label_sig} Vertex X Position",
-        range=(0, 600),
+        range=(-400, 400),
         bins=nbins,
         xlabel="Vertex X (cm)",
         ylabel="Counts",
@@ -2123,6 +2707,27 @@ def run_all_triple_hist_single(
         label_sig=label_sig,
         total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
+    # ============================================================
+    # Step 9: Number of hits in slice
+    # ============================================================
+    sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames = apply_cuts_if_needed(
+        sig_events_orig, sig_weights_orig, sig_true_events_orig, sig_labels_orig, sig_filenames_orig, skip_cut=None
+    )
+    triple_hist_single(
+        hist_sig=sig_events[:, aggregate_dict["numberOfHitsInSlice"]],
+        sig_weights=sig_weights,
+        output_folder=output_folder_base,
+        spill_status=spill_status,
+        plot_name="numberOfHitsInSlice_spectrum",
+        title=f"{label_sig} Number of Hits in Slice",
+        range=(0, 50000),
+        bins=25,
+        xlabel="Number of Hits in Slice",
+        ylabel="Counts",
+        label_sig=label_sig,
+        total_time_with_correct_tps_on=total_time_with_correct_tps_on
+    )
+
 
     print(f"Finished plotting for {label_sig}")
 

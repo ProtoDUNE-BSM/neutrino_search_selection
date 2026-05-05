@@ -26,10 +26,12 @@ with open(args.j) as f:
     parameters = json.load(f)
 
 
+events_target = parameters["events_target"] if "events_target" in parameters else None
+
 output_folder_base = parameters["folders"]["output_folder_base"]
 if output_folder_base[-1] == "/":
     output_folder_base = output_folder_base[:-1]
-output_folder_base = output_folder_base + "_"+parameters["analysis"]["TP_RATE"]+"_cuts_"+str(parameters["analysis"]["apply_cuts"])
+output_folder_base = output_folder_base + "_TP_"+parameters["analysis"]["TP_RATE"]+"_cuts_"+str(parameters["analysis"]["apply_cuts"])+"_spill_"+parameters["run"]["SPILL_STATUS"]
 
 output_folder_normalized = output_folder_base+"/output_test_normalized/"
 output_folder_absolute = output_folder_base+"/output_test_absolute/"
@@ -49,7 +51,7 @@ if not os.path.exists(output_folder_full_time):
 
 run_events, run_true_events, run_full_events, run_weights, run_labels, run_filenames = load_from_folder(  parameters["folders"]["mother_folder_run"], 
                                                                                                     get_truth=parameters["run"]["GET_TRUTH"], 
-                                                                                                    get_full_array=True, 
+                                                                                                    get_full_array=False, 
                                                                                                     use_combined=parameters["run"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["run"]["WEIGHT_MODE"], 
                                                                                                     parameters=parameters["run"], 
@@ -70,7 +72,7 @@ if parameters["run"]["TP_RATE"] == "mc":
     run_filenames = [run_filenames[i] for i in index_run]
 
 
-print(f"Loaded {len(run_events)} run events")
+print(f"Events: {len(run_events)}, Weights: {len(run_weights)}, True events: {len(run_true_events)}, Labels: {len(run_labels)}, Filenames: {len(run_filenames)}")
 
 # ------------------ PLOTS -----------------------
 run_all_triple_hist_single(
@@ -117,9 +119,13 @@ np.savetxt(os.path.join(output_folder_base, "run_max_directionZ_hist_absolute.tx
 # ----------------------------------------------
 # Apply cuts in order, save the results in a latex table
 create_table_cuts_single(  run_events_orig, run_weights_orig, run_true_events_orig, run_labels_orig, run_filenames_orig,
-                    cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base)
+                    cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base, events_target = events_target
+)
 
-
-
+# ----------------------------------------------
+# Apply cuts in order, save the results in a latex table
+dump_information_events_single(  run_events_orig, run_weights_orig, run_true_events_orig, run_labels_orig, run_filenames_orig,
+                    cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base, events_target = events_target
+)
 
 
