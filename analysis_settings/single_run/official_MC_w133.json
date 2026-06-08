@@ -1,10 +1,12 @@
 {
     "folders": {
-        "mother_folder_run": ["/pnfs/dune/scratch/users/dpullia/2026/new_MC_2026/"],
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/new_MC_2026/"
+        "mother_folder_run": [
+            "/pnfs/dune/scratch/users/dpullia/2026/official_MC_w133"
+        ],
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/official_MC_w133/"
     },
     "analysis": {
-        "apply_cuts": true,
+        "apply_cuts": false,
         "nbins": 40,
         "TP_RATE": "all"
     },
@@ -38,5 +40,6 @@
         "total_time_high_tp_rate": 8.07608,
         "total_time_low_tp_rate": 8.46393,
         "total_time_all_tp_rate": 7.657333
-    }
+    },
+    "events_target":[5408, 60582, 24584, 21186, 42646, 22013, 68237, 56531, 1248, 2914, 15535, 21419, 74839, 80655, 71703]
 }

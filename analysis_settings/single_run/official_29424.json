@@ -1,20 +1,22 @@
 {
     "folders": {
-        "mother_folder_run": ["/pnfs/dune/scratch/users/dpullia/2026/new_MC_2026/"],
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/new_MC_2026/"
+        "mother_folder_run": [
+            "/pnfs/dune/scratch/users/dpullia/2026/official_29424"
+        ],
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/official_29424/"
     },
     "analysis": {
-        "apply_cuts": true,
+        "apply_cuts": false,
         "nbins": 40,
         "TP_RATE": "all"
     },
     "run": {
-        "SPILL_STATUS": "all",
-        "label": "MC Neutrinos",
-        "GET_TRUTH": true,
-        "WEIGHT_MODE": "POT_1hour",
+        "SPILL_STATUS": "off",
+        "label": "Off spill data",
+        "GET_TRUTH": false,
+        "WEIGHT_MODE": "1hour",
         "USE_COMBINED": true,
-        "TP_RATE": "mc",
+        "TP_RATE": "all",
         "tp_monitor_files":[
             "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29424.csv",
             "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29425.csv"
@@ -38,5 +40,6 @@
         "total_time_high_tp_rate": 8.07608,
         "total_time_low_tp_rate": 8.46393,
         "total_time_all_tp_rate": 7.657333
-    }
+    },
+    "events_target":[5408, 60582, 24584, 21186, 42646, 22013, 68237, 56531, 1248, 2914, 15535, 21419, 74839, 80655, 71703]
 }

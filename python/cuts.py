@@ -18,6 +18,39 @@ cut_thresholds = {
     "roi_z_scale_factor": 460/100
 }
 
+# cut_thresholds = {
+#     "neutrino_pfp_in_slice": 0,
+#     "vertex_z_min": 24.15,
+#     "vertex_y_max": 415.24,
+#     "num_pf_particles_min": 7.6,
+#     "direction_z_max": 0.965,
+#     "energy_first10cm_min": 774.14,
+#     "energy_fifth10cm_min": 1734.72,
+#     "energy_fifteenth10cm_min": 3206.85,
+#     "roi_z_size_min": 23.76,
+#     "roi_z_vertex_distance_max": 34.21,
+#     "tail_length_density_max": 0.43,
+#     "roi_z_scale_factor": 460/100
+# }
+
+
+# cut_thresholds = {
+#     "neutrino_pfp_in_slice": 0,
+#     "vertex_z_min": 24.153041336715113,
+#     "vertex_y_max": 415.2367228614151,
+#     "num_pf_particles_min": 7.599251970822906,
+#     "direction_z_max": 0.9654098854792303,
+#     "energy_first10cm_min": 774.143982469555,
+#     "energy_fifth10cm_min": 1734.7233556268748,
+#     "energy_fifteenth10cm_min": 3206.8451113640367,
+#     "roi_z_size_min": 23.756726171673,
+#     "roi_z_vertex_distance_max": 34.20627051264585,
+#     "tail_length_density_max": 0.429363338844443,
+#     "roi_z_scale_factor": 460/100
+# }
+
+
+
 # List of cuts as (name, function)
 cuts = [
     ("neutrino_pfp_in_slice", lambda s, b: (

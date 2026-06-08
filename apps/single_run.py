@@ -65,6 +65,9 @@ if parameters["run"]["TP_RATE"] == "mc":
     print(f"run events: {np.sum(run_weights)}")
 
     index_run = np.where(run_true_events[:, true_dict["triggerActivityFlag"]] == 1)[0]
+    print(f"Activity flag: {run_true_events[:, true_dict['triggerActivityFlag']].sum()} / {len(run_true_events)}")
+    print(f"Index run: {len(index_run)}")
+
     run_events = run_events[index_run]
     run_weights = run_weights[index_run]
     run_true_events = run_true_events[index_run]
@@ -73,6 +76,10 @@ if parameters["run"]["TP_RATE"] == "mc":
 
 
 print(f"Events: {len(run_events)}, Weights: {len(run_weights)}, True events: {len(run_true_events)}, Labels: {len(run_labels)}, Filenames: {len(run_filenames)}")
+
+# spillStatusFlag
+print((f"Spill on files: {len(run_events[:, aggregate_dict['spillStatusFlag'] == 1])}"))
+print((f"Spill off files: {len(run_events[:, aggregate_dict['spillStatusFlag'] == 0])}"))
 
 # ------------------ PLOTS -----------------------
 run_all_triple_hist_single(

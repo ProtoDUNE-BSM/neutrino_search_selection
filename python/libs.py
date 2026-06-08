@@ -70,6 +70,7 @@ def plot_matrix(tp, fp, tn, fn, save_name, title, parameters=None):
 
 def get_files(folder, get_truth=False, get_full_array=False, use_combined=False, parameters=None):
     print(f"Opening {folder}")
+    print(f"get_truth: {get_truth}, get_full_array: {get_full_array}, use_combined: {use_combined}")
     events = []
     true_events = []
     full_reco_events = []
@@ -85,11 +86,13 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
         # if "combined.root" in files:
         #     files.remove("combined.root")
         if use_combined:
-            if "combined.root" not in files:
+            persistent_path = os.path.join(root, "combined.root").replace("/scratch/", "/persistent/") 
+            print(f"Checking for combined file at {persistent_path}")
+            if not os.path.exists(persistent_path):               
                 print("Combining files")
                 print(f"source /exp/dune/app/users/dpullia/neutrino_search_selection/scripts/hadd_script.sh {root}")
                 os.system(f"source /exp/dune/app/users/dpullia/neutrino_search_selection/scripts/hadd_script.sh {root}")
-            files = ["combined.root"]
+            files = [persistent_path]
 
         for file in files:
             if file == "combined.root" and len(files) > 1:
@@ -187,6 +190,7 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
                 ])
                 if (len(eventIDs)==0):
                     print(f"Warning: empty event in file {file}, skipping")
+                    print(f"Deleting {file}")
                     os.remove(os.path.join(root, file))
                     continue
                 events.append(event)
@@ -198,6 +202,7 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
 
                 # Get the truth information
                 if get_truth:
+                    print(f"Getting truth information for {file}")
                     tree = f["ana/tree_truth"]
                     true_eventIDs = tree["eventID"].array()
                     true_vertexX = tree["vertexX"].array()
@@ -222,8 +227,14 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
                         true_triggerActivityFlag, true_eventSequenceNumber
                     ])
                     true_events.append(true_event)
+                    print(f"true_eventIDs: {true_eventIDs}, eventIDs: {eventIDs}")
+                    print(f"True events shape: {true_event.shape}, Event shape: {event.shape}")
+
                     if (true_event.shape[1]) != event.shape[1]:
+                        print(f"Warning: Inconsistent number of events in {file}")
+                        print(f"Deleting {file}")
                         os.remove(os.path.join(root, file))
+                        sys.exit(1)
                         continue
                 if get_full_array:
                     tree = f["ana/tree_reco"]
@@ -264,6 +275,7 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
                     if len(sublist) != event.shape[1]:
                         if event.shape[1] == 0 and sublist[0].shape[0] == 0:
                             print("Warning: empty event, skipping")
+                            print(f"Deleting {file}")
                             os.remove(os.path.join(root, file))
                             continue
                         print("Error: sublist length does not match events length")
@@ -322,11 +334,13 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
 
     for f in all_folders:
         ev, true_ev, ev_full, ev_filenames, ev_file_info = get_files(f, get_truth=get_truth, get_full_array=get_full_array, use_combined=use_combined, parameters=parameters)
-        print(len(ev), len(true_ev), len(ev_full), len(ev_filenames))
+        print(f"ev: {len(ev)}, true_ev: {len(true_ev)}, ev_full: {len(ev_full)}, ev_filenames: {len(ev_filenames)}")
 
         if spill_status == "off" and parameters["TP_RATE"] != "mc":
             # Get the events that are not in the spill
             spill_index = np.where(ev[:, aggregate_dict["spillStatusFlag"]] == 0)[0]
+            print("spillStatusFlag: ", ev[:, aggregate_dict["spillStatusFlag"]])
+            print(f"Spill off files: {len(ev[spill_index])} out of {len(ev)}")
             ev = ev[spill_index]
             if get_truth:
                 true_ev = true_ev[spill_index]
@@ -336,6 +350,8 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
         elif spill_status == "on" and parameters["TP_RATE"] != "mc":
             # Get the events that are in the spill
             spill_index = np.where(ev[:, aggregate_dict["spillStatusFlag"]] == 1)[0]
+            print("spillStatusFlag: ", ev[:, aggregate_dict["spillStatusFlag"]])
+            print(f"Spill on files: {len(ev[spill_index])} out of {len(ev)}")
             ev = ev[spill_index]
             if get_truth:
                 true_ev = true_ev[spill_index]

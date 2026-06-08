@@ -1,9 +1,9 @@
 {
     "folders": {
-        "mother_folder_signal": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal",
-        "mother_folder_bkg": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal",
-        "mother_folder_mc": "/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal/11890",
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data"
+        "mother_folder_signal": ["/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal"],
+        "mother_folder_bkg": ["/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal"],
+        "mother_folder_mc": ["/pnfs/dune/scratch/users/dpullia/analysis_output_dir_fixed/fnal/11890"],
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/old_data_old_mc_new_cuts"
     },
     "analysis": {
         "apply_cuts": true,

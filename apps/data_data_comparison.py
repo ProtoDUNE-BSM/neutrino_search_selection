@@ -50,7 +50,7 @@ if not os.path.exists(output_folder_full_time):
 
 mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames = load_from_folder(  parameters["folders"]["mother_folder_mc"], 
                                                                                                     get_truth=parameters["mc"]["GET_TRUTH"], 
-                                                                                                    get_full_array=True, 
+                                                                                                    get_full_array=False, 
                                                                                                     use_combined=parameters["mc"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["mc"]["WEIGHT_MODE"], 
                                                                                                     parameters=parameters["mc"], 
@@ -73,7 +73,7 @@ print(f"MC events: {np.sum(mc_weights)}")
 
 sig_events, sig_true_events, sig_full_events, sig_weights, sig_labels, sig_filenames = load_from_folder(  parameters["folders"]["mother_folder_signal"], 
                                                                                                     get_truth=parameters["signal"]["GET_TRUTH"], 
-                                                                                                    get_full_array=True, 
+                                                                                                    get_full_array=False, 
                                                                                                     use_combined=parameters["signal"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["signal"]["WEIGHT_MODE"], 
                                                                                                     parameters=parameters["signal"], 
@@ -81,7 +81,7 @@ sig_events, sig_true_events, sig_full_events, sig_weights, sig_labels, sig_filen
                                                                             
 bkg_events, bkg_true_events, bkg_full_events, bkg_weights, bkg_labels, bkg_filenames = load_from_folder(    parameters["folders"]["mother_folder_bkg"],
                                                                                                             get_truth=parameters["bkg"]["GET_TRUTH"],
-                                                                                                            get_full_array=True, 
+                                                                                                            get_full_array=False, 
                                                                                                             use_combined=parameters["bkg"]["USE_COMBINED"], 
                                                                                                             weights_mode=parameters["bkg"]["WEIGHT_MODE"], 
                                                                                                             parameters=parameters["bkg"], 
