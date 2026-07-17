@@ -17,9 +17,9 @@ echo "INFO  : I'm in folder $PWD"
 
 voms-proxy-init -rfc -noregen -voms=dune:/dune/Role=Analysis -valid 120:00
 TMPFILE=$(mktemp)
-find *proc_bsmtrigger*.root | sed 's#/pnfs/dune/#root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/dune/#' > $TMPFILE
+# find *proc_bsmtrigger*.root | sed 's#/pnfs/dune/#root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/dune/#' > $TMPFILE
 # find *prod_protodunehd*.root | sed 's#/pnfs/dune/#root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/dune/#' > $TMPFILE
-# find *anaOut*.root | sed 's#/pnfs/dune/#root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/dune/#' > $TMPFILE
+find *anaOut*.root | sed 's#/pnfs/dune/#root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/dune/#' > $TMPFILE
 hadd -f combined.root @${TMPFILE}
 
 

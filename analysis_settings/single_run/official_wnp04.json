@@ -1,9 +1,9 @@
 {
     "folders": {
         "mother_folder_run": [
-            "/pnfs/dune/scratch/users/dpullia/2026/official_MC_wnp04"
+            "/pnfs/dune/scratch/users/dpullia/2026/official_wnp04"
         ],
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/official_MC_wnp04/"
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/official_wnp04/"
     },
     "analysis": {
         "apply_cuts": false,
@@ -11,7 +11,7 @@
         "TP_RATE": "all"
     },
     "run": {
-        "SPILL_STATUS": "all",
+        "SPILL_STATUS": "on",
         "label": "MC Neutrinos",
         "GET_TRUTH": true,
         "WEIGHT_MODE": "POT_1hour",

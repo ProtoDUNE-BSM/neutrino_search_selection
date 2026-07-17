@@ -59,6 +59,7 @@ run_events, run_true_events, run_full_events, run_weights, run_labels, run_filen
 
 if parameters["run"]["TP_RATE"] == "mc":
     print('------------')
+    print(f"Before TA cut we have: {np.sum(run_weights)} per hour")
     print("TA cut:")
     # Apply the trigger activity cut
     print(len(run_events), len(run_weights), len(run_true_events), len(run_labels))
@@ -73,6 +74,7 @@ if parameters["run"]["TP_RATE"] == "mc":
     run_true_events = run_true_events[index_run]
     run_labels = run_labels[index_run]
     run_filenames = [run_filenames[i] for i in index_run]
+    print(f"After TA cut we have: {np.sum(run_weights)} per hour")
 
 
 print(f"Events: {len(run_events)}, Weights: {len(run_weights)}, True events: {len(run_true_events)}, Labels: {len(run_labels)}, Filenames: {len(run_filenames)}")
@@ -135,4 +137,51 @@ dump_information_events_single(  run_events_orig, run_weights_orig, run_true_eve
                     cuts_names=cuts_names, skip_cut=None, output_folder=output_folder_base, events_target = events_target
 )
 
+# ----------------------------------------------
+# MC vertex resolution plots (only when truth info is available)
+if len(run_true_events_orig) > 0:
+    run_ev_cut, run_w_cut, run_true_cut, run_lab_cut, run_fnames_cut = apply_all_cuts_single(
+        run_events_orig, run_weights_orig, run_true_events_orig, run_labels_orig, run_filenames_orig,
+        cuts=cuts_single, skip_cut=None
+    )
 
+    if len(run_ev_cut) > 0:
+        label = parameters["run"]["label"]
+        nbins = parameters["analysis"]["nbins"]
+
+        dx = run_ev_cut[:, aggregate_dict["vertexX"]] - run_true_cut[:, true_dict["vertexX"]]
+        dy = run_ev_cut[:, aggregate_dict["vertexY"]] - run_true_cut[:, true_dict["vertexY"]]
+        dz = run_ev_cut[:, aggregate_dict["vertexZ"]] - run_true_cut[:, true_dict["vertexZ"]]
+        dist3d = np.sqrt(dx**2 + dy**2 + dz**2)
+
+        fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+        axes[0, 0].hist(dx, bins=nbins, range=(-15, 15), weights=run_w_cut/np.sum(run_w_cut), color="orange", alpha=0.7)
+        axes[0, 0].set_xlabel("Reco - True Vertex X [cm]")
+        axes[0, 0].set_ylabel("Counts")
+        axes[0, 0].set_title("Vertex X Residual")
+        axes[0, 0].grid(alpha=0.5)
+
+        axes[0, 1].hist(dy, bins=nbins, range=(-15, 15), weights=run_w_cut/np.sum(run_w_cut), color="orange", alpha=0.7)
+        axes[0, 1].set_xlabel("Reco - True Vertex Y [cm]")
+        axes[0, 1].set_ylabel("Counts")
+        axes[0, 1].set_title("Vertex Y Residual")
+        axes[0, 1].grid(alpha=0.5)
+
+        axes[1, 0].hist(dz, bins=nbins, range=(-15, 15), weights=run_w_cut/np.sum(run_w_cut), color="orange", alpha=0.7)
+        axes[1, 0].set_xlabel("Reco - True Vertex Z [cm]")
+        axes[1, 0].set_ylabel("Counts")
+        axes[1, 0].set_title("Vertex Z Residual")
+        axes[1, 0].grid(alpha=0.5)
+
+        axes[1, 1].hist(dist3d, bins=nbins, range=(0, 25), weights=run_w_cut/np.sum(run_w_cut), color="orange", alpha=0.7)
+        axes[1, 1].set_xlabel("3D Distance [cm]")
+        axes[1, 1].set_ylabel("Counts")
+        axes[1, 1].set_title("3D Reco-True Vertex Distance")
+        axes[1, 1].grid(alpha=0.5)
+
+        plt.suptitle(f"{label}: Vertex Resolution (all cuts applied)", fontsize=14)
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_folder_base, "mc_vertex_resolution.png"))
+        plt.close()
+        print(f"Saved mc_vertex_resolution.png with {len(run_ev_cut)} events passing all cuts.")

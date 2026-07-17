@@ -47,6 +47,16 @@ if not os.path.exists(output_folder_1hour):
 if not os.path.exists(output_folder_full_time):
     os.makedirs(output_folder_full_time)
 
+if parameters["analysis"]["TP_RATE"] == "all":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_all_tp_rate"]
+elif parameters["analysis"]["TP_RATE"] == "high":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_high_tp_rate"]
+elif parameters["analysis"]["TP_RATE"] == "low":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_low_tp_rate"]
+else:
+    print(f"Unknown TP_RATE: {parameters['analysis']['TP_RATE']}. Exiting.")
+    sys.exit(1)
+
 
 mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames = load_from_folder(  parameters["folders"]["mother_folder_mc"], 
                                                                                                     get_truth=parameters["mc"]["GET_TRUTH"], 
@@ -104,7 +114,7 @@ run_all_triple_hist_stack(
     spill_status = f"{parameters['signal']['SPILL_STATUS']}_{parameters['bkg']['SPILL_STATUS']}",
     apply_cuts=parameters["analysis"]["apply_cuts"],
     cuts=cuts_with_mc, 
-    total_time_with_correct_tps_on=parameters["signal"]["run_parameters"]["spill_on"]["total_time"]
+    total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
 
 # -----------------------------------------

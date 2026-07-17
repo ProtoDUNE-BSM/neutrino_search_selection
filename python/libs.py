@@ -227,14 +227,13 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
                         true_triggerActivityFlag, true_eventSequenceNumber
                     ])
                     true_events.append(true_event)
-                    print(f"true_eventIDs: {true_eventIDs}, eventIDs: {eventIDs}")
-                    print(f"True events shape: {true_event.shape}, Event shape: {event.shape}")
+                    # print(f"true_eventIDs: {true_eventIDs}, eventIDs: {eventIDs}")
+                    # print(f"True events shape: {true_event.shape}, Event shape: {event.shape}")
 
                     if (true_event.shape[1]) != event.shape[1]:
                         print(f"Warning: Inconsistent number of events in {file}")
                         print(f"Deleting {file}")
                         os.remove(os.path.join(root, file))
-                        sys.exit(1)
                         continue
                 if get_full_array:
                     tree = f["ana/tree_reco"]
@@ -415,7 +414,8 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
             index_all = np.array([tp_rate_below_threshold(ts, 2.1E6, monitor_tp_time, monitor_tp_rate, parameters=parameters) for ts in all_events[:, aggregate_dict["eventTimestamp"]]])
             print(np.sum(index_all))
             all_events = all_events[index_all]
-            all_true_events = all_true_events[index_all]
+            if get_truth:
+                all_true_events = all_true_events[index_all]
             all_labels = all_labels[index_all]
             all_weights = all_weights[index_all]
             filenames = [filenames[i] for i in range(len(filenames)) if index_all[i]]
@@ -424,7 +424,8 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
             index_all = np.array([tp_rate_above_threshold(ts, 2.1E6, monitor_tp_time, monitor_tp_rate, parameters=parameters) for ts in all_events[:, aggregate_dict["eventTimestamp"]]])
             print(np.sum(index_all))
             all_events = all_events[index_all]
-            all_true_events = all_true_events[index_all]
+            if get_truth:
+                all_true_events = all_true_events[index_all]
             all_labels = all_labels[index_all]
             all_weights = all_weights[index_all]
             filenames = [filenames[i] for i in range(len(filenames)) if index_all[i]]
