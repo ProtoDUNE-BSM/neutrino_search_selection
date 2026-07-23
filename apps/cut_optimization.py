@@ -26,9 +26,10 @@ args = parser.parse_args()
 with open(args.j) as f:
     parameters = json.load(f)
 
-nsteps = parameters["settings"]["nsteps"] 
+nsteps = parameters["settings"]["nsteps"]
 nwalkers = parameters["settings"]["nwalkers"]
 nburn = parameters["settings"]["nburn"]
+skip_optimization_requested = parameters["settings"].get("skip_optimization", 0) == 1
 
 events_target = parameters["events_target"] if "events_target" in parameters else None
 
@@ -37,6 +38,11 @@ output_folder_opt = output_folder_base + "/optimized"
 output_folder_def = output_folder_base + "/default"
 if output_folder_base[-1] == "/":
     output_folder_base = output_folder_base[:-1]
+
+results_file_path = os.path.join(output_folder_base, "cut_optimization_results.txt")
+skip_optimization = skip_optimization_requested and os.path.isfile(results_file_path)
+if skip_optimization_requested and not skip_optimization:
+    print(f"WARNING: skip_optimization requested but no previous results found at {results_file_path}; running optimization normally.")
 
 if not os.path.exists(output_folder_base):
     os.makedirs(output_folder_base)
@@ -51,8 +57,9 @@ data_events, data_true_events, data_full_events, data_weights, data_labels, data
                                                                                                     get_full_array=False, 
                                                                                                     use_combined=parameters["data"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["data"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["data"], 
-                                                                                                    spill_status=parameters["data"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["data"],
+                                                                                                    spill_status=parameters["data"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
   
 
 
@@ -62,8 +69,9 @@ mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames =
                                                                                                     get_full_array=False, 
                                                                                                     use_combined=parameters["mc"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["mc"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["mc"], 
-                                                                                                    spill_status=parameters["mc"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["mc"],
+                                                                                                    spill_status=parameters["mc"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
 
 print('------------')
 print("TA cut:")
@@ -332,6 +340,27 @@ def apply_all_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig_fi
     return s_ev, s_w, s_true, s_lab, s_fnames, b_ev, b_w, b_lab, b_fnames
 
 
+def load_best_params_from_results(results_path, threshold_boundaries):
+    # Parses the "key: value" lines written by a previous run's cut_optimization_results.txt,
+    # keeping only lines whose key is a threshold parameter (ignores summary lines like "Efficiency: ...").
+    values = {}
+    with open(results_path) as f:
+        for line in f:
+            if ":" not in line:
+                continue
+            key, _, val = line.partition(":")
+            key = key.strip()
+            if key in threshold_boundaries:
+                try:
+                    values[key] = float(val.strip())
+                except ValueError:
+                    continue
+    missing = [k for k in threshold_boundaries if k not in values]
+    if missing:
+        raise ValueError(f"Could not find values for {missing} in {results_path}")
+    return np.array([values[k] for k in threshold_boundaries])
+
+
 def log_likelihood(theta, mc_events, mc_weights, data_events, data_weights):
     # Unpack the parameters
     vertex_z_min, vertex_y_max, num_pf_particles_min, direction_z_max, energy_first10cm_min, energy_fifth10cm_min, energy_fifteenth10cm_min, roi_z_size_min, roi_z_vertex_distance_max, tail_length_density_max = theta    
@@ -456,6 +485,19 @@ threshold_boundaries = {
     "tail_length_density_max": (0, 1),
 }
 
+threshold_pretty_names = {
+    "vertex_z_min": r"Vertex $z$ min",
+    "vertex_y_max": r"Vertex $y$ max",
+    "num_pf_particles_min": r"N daughter particles",
+    "direction_z_max": r"Max $\cos(\theta_{\mathrm{beam}})$",
+    "energy_first10cm_min": r"Cut on $C_{0-10}$",
+    "energy_fifth10cm_min": r"Cut on $C_{40-50}$",
+    "energy_fifteenth10cm_min": r"Cut on $C_{140-150}$",
+    "roi_z_size_min": r"ROI Z size",
+    "roi_z_vertex_distance_max": r"ROI Z close to vertex",
+    "tail_length_density_max": r"Tail Length Density",
+}
+
 
 def logprior(args):
     vertex_z_min, vertex_y_max, num_pf_particles_min, direction_z_max, energy_first10cm_min, energy_fifth10cm_min, energy_fifteenth10cm_min, roi_z_size_min, roi_z_vertex_distance_max, tail_length_density_max = args
@@ -522,49 +564,54 @@ print("Initial parameters:", manual_guess_parameters)
 # ------------------- Start optimization -----------------------
 
 
-# Run the MCMC sampler
-ndim = len(manual_guess_parameters)
-initial_params = np.random.rand(nwalkers, len(manual_guess_parameters)) * [threshold_boundaries[key][1] - threshold_boundaries[key][0] for key in threshold_boundaries.keys()] + [threshold_boundaries[key][0] for key in threshold_boundaries.keys()]
-sampler = emcee.EnsembleSampler(nwalkers, ndim, logpost, args=(mc_events, mc_weights, data_events, data_weights))
-sampler.run_mcmc(initial_params, nsteps, progress=True)
+if skip_optimization:
+    print(f"Skipping optimization, loading best parameters from {results_file_path}")
+    best_params = load_best_params_from_results(results_file_path, threshold_boundaries)
+    print("Best parameters (loaded):", best_params)
+else:
+    # Run the MCMC sampler
+    ndim = len(manual_guess_parameters)
+    initial_params = np.random.rand(nwalkers, len(manual_guess_parameters)) * [threshold_boundaries[key][1] - threshold_boundaries[key][0] for key in threshold_boundaries.keys()] + [threshold_boundaries[key][0] for key in threshold_boundaries.keys()]
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, logpost, args=(mc_events, mc_weights, data_events, data_weights))
+    sampler.run_mcmc(initial_params, nsteps, progress=True)
 
-samples = sampler.get_chain(discard=nburn, flat=False)
+    samples = sampler.get_chain(discard=nburn, flat=False)
 
-fig, axes = plt.subplots(figsize = (10, 20), ncols = 1, nrows = ndim)
+    fig, axes = plt.subplots(figsize = (10, 20), ncols = 1, nrows = ndim)
 
-# get the histogram of the log likelihood values and plot it
-scores = sampler.get_log_prob(flat=True)
-plt.figure()
-plt.hist(scores, bins=50)
-plt.xlabel("Log likelihood")
-plt.ylabel("Number of samples")
-plt.title("Histogram of log likelihood values")
-plt.savefig(os.path.join(output_folder_base, "log_likelihood_histogram.png"))
-plt.close()
-# plot the sequence of likelihood values for each walker
-plt.figure()
-plt.plot(sampler.get_log_prob(), alpha=0.7)
-plt.xlabel("Step number")
-plt.ylabel("Log likelihood")
-plt.title("Log likelihood values for each walker")
-plt.savefig(os.path.join(output_folder_base, "log_likelihood_chains.png"))
-plt.close()
-
-
+    # get the histogram of the log likelihood values and plot it
+    scores = sampler.get_log_prob(flat=True)
+    plt.figure()
+    plt.hist(scores, bins=50)
+    plt.xlabel("Log likelihood")
+    plt.ylabel("Number of samples")
+    plt.title("Histogram of log likelihood values")
+    plt.savefig(os.path.join(output_folder_base, "log_likelihood_histogram.png"))
+    plt.close()
+    # plot the sequence of likelihood values for each walker
+    plt.figure()
+    plt.plot(sampler.get_log_prob(), alpha=0.7)
+    plt.xlabel("Step number")
+    plt.ylabel("Log likelihood")
+    plt.title("Log likelihood values for each walker")
+    plt.savefig(os.path.join(output_folder_base, "log_likelihood_chains.png"))
+    plt.close()
 
 
 
-for i in range(ndim):
-    for k in range(nwalkers):
-        axes[i].plot(samples[: , k, i], alpha=0.7)
-    axes[i].set_xlabel("Step number")
 
-plt.savefig(os.path.join(output_folder_base, "mcmc_chains.png"))
-plt.close()
 
-# Get the best parameters
-best_params = sampler.get_chain(flat=True)[np.argmax(sampler.get_log_prob(flat=True))]
-print("Best parameters:", best_params)
+    for i in range(ndim):
+        for k in range(nwalkers):
+            axes[i].plot(samples[: , k, i], alpha=0.7)
+        axes[i].set_xlabel("Step number")
+
+    plt.savefig(os.path.join(output_folder_base, "mcmc_chains.png"))
+    plt.close()
+
+    # Get the best parameters
+    best_params = sampler.get_chain(flat=True)[np.argmax(sampler.get_log_prob(flat=True))]
+    print("Best parameters:", best_params)
 
 # Save results to a file
 with open(os.path.join(output_folder_base, "cut_optimization_results.txt"), "w") as f:
@@ -660,6 +707,7 @@ with open(os.path.join(output_folder_base, "cut_optimization_results.txt"), "w")
 
 # for each parameter, fix the others to the best value and vary it to see how the score changes, and plot the results
 for i, key in enumerate(threshold_boundaries.keys()):
+    pretty_key = threshold_pretty_names[key]
     param_values = np.linspace(max(threshold_boundaries[key][0], best_params[i]*0.6), min(threshold_boundaries[key][1], best_params[i]*1.4), 20)
     scores = []
     efficiencies = []
@@ -681,57 +729,57 @@ for i, key in enumerate(threshold_boundaries.keys()):
     fig, axes = plt.subplots(1, 4, figsize=(15, 4))
     axes[0].plot(param_values, scores, color='blue', linewidth=2)
     axes[0].axvline(x=best_params[i], color='r', linestyle='--', label='Optimized value')
-    axes[0].set_xlabel(key)
+    axes[0].set_xlabel(pretty_key)
     axes[0].set_ylabel("Score")
-    axes[0].set_title(f"Score vs {key}")
+    axes[0].set_title(f"Score vs {pretty_key}")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
-    
+
     axes[1].plot(param_values, efficiencies, color='green', linewidth=2)
     axes[1].axvline(x=best_params[i], color='r', linestyle='--', label='Optimized value')
-    axes[1].set_xlabel(key)
+    axes[1].set_xlabel(pretty_key)
     axes[1].set_ylabel("Efficiency")
-    axes[1].set_title(f"Efficiency vs {key}")
+    axes[1].set_title(f"Efficiency vs {pretty_key}")
     axes[1].legend()
     axes[1].grid(True, alpha=0.3)
-    
+
     axes[2].plot(param_values, purities, color='orange', linewidth=2)
     axes[2].axvline(x=best_params[i], color='r', linestyle='--', label='Optimized value')
-    axes[2].set_xlabel(key)
+    axes[2].set_xlabel(pretty_key)
     axes[2].set_ylabel("Purity")
-    axes[2].set_title(f"Purity vs {key}")
+    axes[2].set_title(f"Purity vs {pretty_key}")
     axes[2].legend()
     axes[2].grid(True, alpha=0.3)
 
     axes[3].plot(param_values, significances, color='magenta', linewidth=2)
     axes[3].axvline(x=best_params[i], color='r', linestyle='--', label='Optimized value')
-    axes[3].set_xlabel(key)
+    axes[3].set_xlabel(pretty_key)
     axes[3].set_ylabel("Significance")
-    axes[3].set_title(f"Significance vs {key}")
+    axes[3].set_title(f"Significance vs {pretty_key}")
     axes[3].legend()
     axes[3].grid(True, alpha=0.3)
-    
-    plt.tight_layout()
+
+    plt.tight_layout(rect=[0, 0, 0.97, 1])
     plt.savefig(os.path.join(output_folder_opt, f"{key}_score_efficiency_purity_significance.png"))
     plt.close()
-    
+
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
     axes[0].plot(param_values, total_mc, color='purple', linewidth=2)
     axes[0].axvline(x=best_params[i], color='r', linestyle='--', label='Optimized value')
-    axes[0].set_xlabel(key)
+    axes[0].set_xlabel(pretty_key)
     axes[0].set_ylabel("Number of events")
-    axes[0].set_title(f"Total MC events after cuts vs {key}")
+    axes[0].set_title(f"MC events vs {pretty_key}")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
-    
+
     axes[1].plot(param_values, total_data, color='cyan', linewidth=2)
     axes[1].axvline(x=best_params[i], color='r', linestyle='--', label='Optimized value')
-    axes[1].set_xlabel(key)
+    axes[1].set_xlabel(pretty_key)
     axes[1].set_ylabel("Number of events")
-    axes[1].set_title(f"Total off spill data events after cuts vs {key}")
+    axes[1].set_title(f"Off spill data vs {pretty_key}")
     axes[1].legend()
     axes[1].grid(True, alpha=0.3)
-    
+
     plt.tight_layout()
     plt.savefig(os.path.join(output_folder_opt, f"{key}_total_events.png"))
     plt.close()
@@ -740,6 +788,7 @@ for i, key in enumerate(threshold_boundaries.keys()):
 # do the same for the default cuts, varying each parameter around the default value
 
 for i, key in enumerate(threshold_boundaries.keys()):
+    pretty_key = threshold_pretty_names[key]
     param_values = np.linspace(max(threshold_boundaries[key][0], default_cut_thresholds[key]*0.6), min(threshold_boundaries[key][1], default_cut_thresholds[key]*1.4), 20)
     scores = []
     efficiencies = []
@@ -776,54 +825,54 @@ for i, key in enumerate(threshold_boundaries.keys()):
     fig, axes = plt.subplots(1, 4, figsize=(15, 4))
     axes[0].plot(param_values, scores, color='blue', linewidth=2)
     axes[0].axvline(x=default_cut_thresholds[key], color='r', linestyle='--', label='Default value')
-    axes[0].set_xlabel(key)
+    axes[0].set_xlabel(pretty_key)
     axes[0].set_ylabel("Score")
-    axes[0].set_title(f"Score vs {key}")
+    axes[0].set_title(f"Score vs {pretty_key}")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
     
     axes[1].plot(param_values, efficiencies, color='green', linewidth=2)
     axes[1].axvline(x=default_cut_thresholds[key], color='r', linestyle='--', label='Default value')
-    axes[1].set_xlabel(key)
+    axes[1].set_xlabel(pretty_key)
     axes[1].set_ylabel("Efficiency")
-    axes[1].set_title(f"Efficiency vs {key}")
+    axes[1].set_title(f"Efficiency vs {pretty_key}")
     axes[1].legend()
     axes[1].grid(True, alpha=0.3)
     
     axes[2].plot(param_values, purities, color='orange', linewidth=2)
     axes[2].axvline(x=default_cut_thresholds[key], color='r', linestyle='--', label='Default value')
-    axes[2].set_xlabel(key)
+    axes[2].set_xlabel(pretty_key)
     axes[2].set_ylabel("Purity")
-    axes[2].set_title(f"Purity vs {key}")
+    axes[2].set_title(f"Purity vs {pretty_key}")
     axes[2].legend()
     axes[2].grid(True, alpha=0.3)
     
     axes[3].plot(param_values, significances, color='magenta', linewidth=2)
     axes[3].axvline(x=default_cut_thresholds[key], color='r', linestyle='--', label='Default value')
-    axes[3].set_xlabel(key)
+    axes[3].set_xlabel(pretty_key)
     axes[3].set_ylabel("Significance")
-    axes[3].set_title(f"Significance vs {key}")
+    axes[3].set_title(f"Significance vs {pretty_key}")
     axes[3].legend()
     axes[3].grid(True, alpha=0.3)
 
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 0.97, 1])
     plt.savefig(os.path.join(output_folder_def, f"{key}_score_efficiency_purity_significance.png"))
     plt.close()
     
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
     axes[0].plot(param_values, total_mc, color='purple', linewidth=2)
     axes[0].axvline(x=default_cut_thresholds[key], color='r', linestyle='--', label='Default value')
-    axes[0].set_xlabel(key)
+    axes[0].set_xlabel(pretty_key)
     axes[0].set_ylabel("Number of events")
-    axes[0].set_title(f"Total MC events after cuts vs {key}")
+    axes[0].set_title(f"MC events vs {pretty_key}")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
     
     axes[1].plot(param_values, total_data, color='cyan', linewidth=2)
     axes[1].axvline(x=default_cut_thresholds[key], color='r', linestyle='--', label='Default value')
-    axes[1].set_xlabel(key)
+    axes[1].set_xlabel(pretty_key)
     axes[1].set_ylabel("Number of events")
-    axes[1].set_title(f"Total off spill data events after cuts vs {key}")
+    axes[1].set_title(f"Off spill data vs {pretty_key}")
     axes[1].legend()
     axes[1].grid(True, alpha=0.3)
     

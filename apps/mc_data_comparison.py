@@ -47,14 +47,25 @@ if not os.path.exists(output_folder_1hour):
 if not os.path.exists(output_folder_full_time):
     os.makedirs(output_folder_full_time)
 
+if parameters["analysis"]["TP_RATE"] == "all":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_all_tp_rate"]
+elif parameters["analysis"]["TP_RATE"] == "high":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_high_tp_rate"]
+elif parameters["analysis"]["TP_RATE"] == "low":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_low_tp_rate"]
+else:
+    print(f"Unknown TP_RATE: {parameters['analysis']['TP_RATE']}. Exiting.")
+    sys.exit(1)
+
 
 mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames = load_from_folder(  parameters["folders"]["mother_folder_mc"], 
                                                                                                     get_truth=parameters["mc"]["GET_TRUTH"], 
                                                                                                     get_full_array=True, 
                                                                                                     use_combined=parameters["mc"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["mc"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["mc"], 
-                                                                                                    spill_status=parameters["mc"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["mc"],
+                                                                                                    spill_status=parameters["mc"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
 
 print('------------')
 print("TA cut:")
@@ -76,8 +87,9 @@ data_events, data_true_events, data_full_events, data_weights, data_labels, data
                                                                                                     get_full_array=True, 
                                                                                                     use_combined=parameters["data"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["data"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["data"], 
-                                                                                                    spill_status=parameters["data"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["data"],
+                                                                                                    spill_status=parameters["data"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
   
 
 
@@ -95,8 +107,8 @@ run_all_triple_hist(
     nbins=parameters["analysis"]["nbins"], 
     spill_status = f"{parameters['mc']['SPILL_STATUS']}_{parameters['data']['SPILL_STATUS']}",
     apply_cuts=parameters["analysis"]["apply_cuts"],
-    cuts=cuts, 
-    total_time_with_correct_tps_on=parameters["mc"]["run_parameters"]["spill_on"]["total_time"]
+    cuts=cuts,
+    total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
     
 # -----------------------------------------

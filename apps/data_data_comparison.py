@@ -63,8 +63,9 @@ mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames =
                                                                                                     get_full_array=False, 
                                                                                                     use_combined=parameters["mc"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["mc"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["mc"], 
-                                                                                                    spill_status=parameters["mc"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["mc"],
+                                                                                                    spill_status=parameters["mc"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
 
 print('------------')
 print("TA cut:")
@@ -86,16 +87,18 @@ sig_events, sig_true_events, sig_full_events, sig_weights, sig_labels, sig_filen
                                                                                                     get_full_array=False, 
                                                                                                     use_combined=parameters["signal"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["signal"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["signal"], 
-                                                                                                    spill_status=parameters["signal"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["signal"],
+                                                                                                    spill_status=parameters["signal"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
                                                                             
 bkg_events, bkg_true_events, bkg_full_events, bkg_weights, bkg_labels, bkg_filenames = load_from_folder(    parameters["folders"]["mother_folder_bkg"],
                                                                                                             get_truth=parameters["bkg"]["GET_TRUTH"],
                                                                                                             get_full_array=False, 
                                                                                                             use_combined=parameters["bkg"]["USE_COMBINED"], 
                                                                                                             weights_mode=parameters["bkg"]["WEIGHT_MODE"], 
-                                                                                                            parameters=parameters["bkg"], 
-                                                                                                            spill_status=parameters["bkg"]["SPILL_STATUS"])
+                                                                                                            parameters=parameters["bkg"],
+                                                                                                            spill_status=parameters["bkg"]["SPILL_STATUS"],
+                                                                                                            timing=parameters["timing"])
 
 
 

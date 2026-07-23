@@ -7,7 +7,8 @@
     "settings":{
         "nsteps": 5000,
         "nwalkers": 50,
-        "nburn": 2000
+        "nburn": 2000,
+        "skip_optimization": 0
     },
     "data": {
         "SPILL_STATUS": "off",
@@ -64,6 +65,6 @@
     "timing": {
         "total_time_high_tp_rate": 8.07608,
         "total_time_low_tp_rate": 8.46393,
-        "total_time_all_tp_rate": 7.657333
+        "total_time_all_tp_rate": 16.54001
     }
 }

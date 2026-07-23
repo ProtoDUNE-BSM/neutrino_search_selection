@@ -1,6 +1,6 @@
 #!bin/bash
 
-json_file=../analysis_settings/cut_optimization/standard.json
+json_file=../analysis_settings/cut_optimization/standard_2.json
 
 # /exp/dune/app/users/dpullia/neutrino_search_selection/extra_libs/lib/python3.13/site-packages
 # append to PYTHONPATH

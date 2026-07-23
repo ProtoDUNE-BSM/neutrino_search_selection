@@ -310,7 +310,7 @@ def get_files(folder, get_truth=False, get_full_array=False, use_combined=False,
 
 
 
-def load_from_folder(folders, get_truth=False, get_full_array=False, use_combined=False, weights_mode="POT", parameters=None, spill_status="off"):
+def load_from_folder(folders, get_truth=False, get_full_array=False, use_combined=False, weights_mode="POT", parameters=None, spill_status="off", timing=None):
     all_events = []
     all_true_events = []
     all_full_events = []
@@ -389,12 +389,17 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
     all_events = np.concatenate(all_events)
     all_true_events = np.concatenate(all_true_events)
     all_labels = np.concatenate(all_labels)
+    if spill_status == "on" and timing is not None and parameters["TP_RATE"] in ("all", "high", "low"):
+        normalization_time = timing[f"total_time_{parameters['TP_RATE']}_tp_rate"]
+    else:
+        normalization_time = parameters["run_parameters"][f"spill_{spill_status}"]["total_time"]
+
     if weights_mode == "1hour":
         job = f.split("/")[-3]
-        all_weights = np.ones(all_events.shape[0]) * (1/parameters["run_parameters"][f"spill_{spill_status}"]["total_time"])
+        all_weights = np.ones(all_events.shape[0]) * (1/normalization_time)
     elif weights_mode == "POT_1hour":
         all_weights = np.array([parameters["run_parameters"][f"spill_{spill_status}"]["total_POT"] / total_POT_MC] * all_events.shape[0])
-        all_weights = all_weights * (1/parameters["run_parameters"][f"spill_{spill_status}"]["total_time"])
+        all_weights = all_weights * (1/normalization_time)
     else:
         all_weights = np.concatenate(all_weights)
 

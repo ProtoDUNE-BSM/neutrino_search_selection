@@ -54,8 +54,9 @@ run_events, run_true_events, run_full_events, run_weights, run_labels, run_filen
                                                                                                     get_full_array=False, 
                                                                                                     use_combined=parameters["run"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["run"]["WEIGHT_MODE"], 
-                                                                                                    parameters=parameters["run"], 
-                                                                                                    spill_status=parameters["run"]["SPILL_STATUS"])
+                                                                                                    parameters=parameters["run"],
+                                                                                                    spill_status=parameters["run"]["SPILL_STATUS"],
+                                                                                                    timing=parameters["timing"])
 
 if parameters["run"]["TP_RATE"] == "mc":
     print('------------')
@@ -84,15 +85,28 @@ print((f"Spill on files: {len(run_events[:, aggregate_dict['spillStatusFlag'] ==
 print((f"Spill off files: {len(run_events[:, aggregate_dict['spillStatusFlag'] == 0])}"))
 
 # ------------------ PLOTS -----------------------
+run_tp_rate = parameters["run"]["TP_RATE"]
+if run_tp_rate == "all":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_all_tp_rate"]
+elif run_tp_rate == "high":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_high_tp_rate"]
+elif run_tp_rate == "low":
+    total_time_with_correct_tps_on = parameters["timing"]["total_time_low_tp_rate"]
+elif run_tp_rate == "mc":
+    total_time_with_correct_tps_on = parameters["run"]["run_parameters"]["spill_on"]["total_time"]
+else:
+    print(f"Unknown TP_RATE: {run_tp_rate}. Exiting.")
+    sys.exit(1)
+
 run_all_triple_hist_single(
     run_events, run_weights,
-    output_folder_base=output_folder_base, 
-    label_sig=parameters["run"]["label"], 
-    nbins=parameters["analysis"]["nbins"], 
+    output_folder_base=output_folder_base,
+    label_sig=parameters["run"]["label"],
+    nbins=parameters["analysis"]["nbins"],
     spill_status = f"{parameters['run']['SPILL_STATUS']}",
     apply_cuts=parameters["analysis"]["apply_cuts"],
-    cuts=cuts_single, 
-    total_time_with_correct_tps_on=parameters["run"]["run_parameters"]["spill_on"]["total_time"]
+    cuts=cuts_single,
+    total_time_with_correct_tps_on=total_time_with_correct_tps_on
     )
 
 

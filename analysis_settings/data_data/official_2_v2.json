@@ -21,12 +21,12 @@
         "mother_folder_mc": [
             "/pnfs/dune/scratch/users/dpullia/2026/official_wnp04"
         ],
-        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/official_2"
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/official_2_v2"
     },
     "analysis": {
         "apply_cuts": true,
         "nbins": 40,
-        "TP_RATE": "high"
+        "TP_RATE": "all"
     },
     "signal": {
         "SPILL_STATUS": "on",
@@ -34,23 +34,23 @@
         "GET_TRUTH": false,
         "WEIGHT_MODE": "1hour",
         "USE_COMBINED": true,
-        "TP_RATE": "high",
+        "TP_RATE": "all",
         "tp_monitor_files":[
             "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29424.csv",
             "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29425.csv"
         ],
         "run_parameters":{
             "spill_on":{
-                "total_POT":3.936E16,
-                "total_time": 16.096
+                "total_POT":4.059E16,
+                "total_time": 16.5387
             },
             "spill_off":{
                 "total_POT": 0,
-                "total_time": 44.687323
+                "total_time": 44.6886
             },
             "spill_all":{
-                "total_POT": 3.936E16,
-                "total_time": 60.783323
+                "total_POT": 4.059E16,
+                "total_time": 61.2273
             }
         }
     },
@@ -67,16 +67,16 @@
         ],
         "run_parameters":{
             "spill_on":{
-                "total_POT":3.936E16,
-                "total_time": 16.096
+                "total_POT":4.059E16,
+                "total_time": 16.5387
             },
             "spill_off":{
                 "total_POT": 0,
-                "total_time": 44.687323
+                "total_time": 44.6886
             },
             "spill_all":{
-                "total_POT": 3.936E16,
-                "total_time": 60.783323
+                "total_POT": 4.059E16,
+                "total_time": 61.2273
             }
         }
     },
@@ -93,22 +93,23 @@
         ],
         "run_parameters":{
             "spill_on":{
-                "total_POT":3.936E16,
-                "total_time": 16.096
+                "total_POT":4.059E16,
+                "total_time": 16.5387
             },
             "spill_off":{
                 "total_POT": 0,
-                "total_time": 44.687323
+                "total_time": 44.6886
             },
             "spill_all":{
-                "total_POT": 3.936E16,
-                "total_time": 60.783323
+                "total_POT": 4.059E16,
+                "total_time": 61.2273
             }
         }
     },
     "timing": {
-        "total_time_high_tp_rate": 7.63207,
-        "total_time_low_tp_rate": 8.46393,
-        "total_time_all_tp_rate": 16.096
+        "total_time_high_tp_rate": 0,
+        "total_time_low_tp_rate": 0,
+        "total_time_all_tp_rate": 16.5387
     }
 }
+
