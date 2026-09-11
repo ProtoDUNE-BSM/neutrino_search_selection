@@ -1,0 +1,40 @@
+{
+    "folders": {
+        "mother_folder_signal": [
+            "/pnfs/dune/scratch/users/dpullia/2026/official_3_29424/fnal/18697",
+            "/pnfs/dune/scratch/users/dpullia/2026/official_3_29424/fnal/18698",
+            "/pnfs/dune/scratch/users/dpullia/2026/official_3_29424/fnal/18699"
+        ],
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/check_overlaps/official_3_29424"
+    },
+    "run": {
+        "label": "official_3_29424",
+        "SPILL_STATUS": "on",
+        "GET_TRUTH": false,
+        "WEIGHT_MODE": "1hour",
+        "USE_COMBINED": true,
+        "TP_RATE": "all",
+        "tp_monitor_files": [
+            "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29424.csv"
+        ],
+        "run_parameters": {
+            "spill_on": {
+                "total_POT": 4.059E16,
+                "total_time": 16.5387
+            },
+            "spill_off": {
+                "total_POT": 0,
+                "total_time": 44.6886
+            },
+            "spill_all": {
+                "total_POT": 4.059E16,
+                "total_time": 61.2273
+            }
+        }
+    },
+    "timing": {
+        "total_time_high_tp_rate": 8.0747,
+        "total_time_low_tp_rate": 8.464,
+        "total_time_all_tp_rate": 16.5387
+    }
+}

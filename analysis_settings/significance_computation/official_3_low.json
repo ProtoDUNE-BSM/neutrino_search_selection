@@ -1,0 +1,33 @@
+{
+    "folders": {
+        "data_data_output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/official_3",
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/significance_computation/official_3_low"
+    },
+    "analysis": {
+        "apply_cuts": true,
+        "TP_RATE": "low"
+    },
+    "settings": {
+        "nsteps": 200000,
+        "nwalkers": 100,
+        "nburn": 20000,
+        "b_rate_limits": [0.001, 3.0],
+        "n_rate_limits": [0.001, 10.0]
+    },
+    "signal": {
+        "label": "On spill data (low TP rate)",
+        "run_parameters": {
+            "spill_on": {
+                "total_time": 8.464
+            }
+        }
+    },
+    "bkg": {
+        "label": "Off spill data",
+        "run_parameters": {
+            "spill_off": {
+                "total_time": 44.6886
+            }
+        }
+    }
+}

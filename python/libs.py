@@ -399,6 +399,7 @@ def load_from_folder(folders, get_truth=False, get_full_array=False, use_combine
         all_weights = np.ones(all_events.shape[0]) * (1/normalization_time)
     elif weights_mode == "POT_1hour":
         all_weights = np.array([parameters["run_parameters"][f"spill_{spill_status}"]["total_POT"] / total_POT_MC] * all_events.shape[0])
+        print(f"Total POT MC: {total_POT_MC}, Total POT: {parameters['run_parameters'][f'spill_{spill_status}']['total_POT']}, Weight: {all_weights[0]}")
         all_weights = all_weights * (1/normalization_time)
     else:
         all_weights = np.concatenate(all_weights)
@@ -808,6 +809,10 @@ def apply_all_cuts_single( sig_events, sig_weights, sig_true_events, sig_labels,
 
 
 
+def _sample_weight(weights):
+    return weights[0] if len(weights) > 0 else 0.0
+
+
 def create_table_cuts_with_mc( sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames,
                     bkg_events, bkg_weights, bkg_labels, bkg_filenames, mc_events, mc_weights, mc_true_events, mc_labels, mc_filenames, 
                     cuts_names, skip_cut=None, output_folder=None):
@@ -818,6 +823,7 @@ def create_table_cuts_with_mc( sig_events, sig_weights, sig_true_events, sig_lab
 
     absolute_sig, absolute_bkg, absolute_mc = [len(s_ev)], [len(b_ev)], [len(mc_ev)]
     normalized_sig, normalized_bkg, normalized_mc = [s_w.sum()], [b_w.sum()], [mc_w.sum()]
+    w_sig, w_bkg = _sample_weight(s_w), _sample_weight(b_w)
 
     for index, name in enumerate(cuts_names):
         cutfunc = next((func for n, func in cuts_with_mc if n == name), None)
@@ -857,10 +863,10 @@ def create_table_cuts_with_mc( sig_events, sig_weights, sig_true_events, sig_lab
         f.write("\\hline\n")
         f.write("Cut & Signal Events & Background Events & MC Events \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {absolute_sig[0]} & {absolute_bkg[0]} & {absolute_mc[0]} \\\\\n")
+        f.write(f"Initial & {absolute_sig[0]} $\\pm$ {np.sqrt(absolute_sig[0]):.2f} & {absolute_bkg[0]} $\\pm$ {np.sqrt(absolute_bkg[0]):.2f} & {absolute_mc[0]} \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {absolute_sig[index+1]} & {absolute_bkg[index+1]} & {absolute_mc[index+1]} \\\\\n")
+            f.write(f"{short_name} & {absolute_sig[index+1]} $\\pm$ {np.sqrt(absolute_sig[index+1]):.2f} & {absolute_bkg[index+1]} $\\pm$ {np.sqrt(absolute_bkg[index+1]):.2f} & {absolute_mc[index+1]} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
     with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
@@ -869,10 +875,10 @@ def create_table_cuts_with_mc( sig_events, sig_weights, sig_true_events, sig_lab
         f.write("\\hline\n")
         f.write("Cut & Signal Events & Background Events & MC Events \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} & {normalized_mc[0]:.2f} \\\\\n")
+        f.write(f"Initial & {normalized_sig[0]:.2f} $\\pm$ {w_sig*np.sqrt(absolute_sig[0]):.2f} & {normalized_bkg[0]:.2f} $\\pm$ {w_bkg*np.sqrt(absolute_bkg[0]):.2f} & {normalized_mc[0]:.2f} \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} & {normalized_mc[index+1]:.2f} \\\\\n")
+            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} $\\pm$ {w_sig*np.sqrt(absolute_sig[index+1]):.2f} & {normalized_bkg[index+1]:.2f} $\\pm$ {w_bkg*np.sqrt(absolute_bkg[index+1]):.2f} & {normalized_mc[index+1]:.2f} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
 
@@ -890,6 +896,7 @@ def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig
 
     absolute_sig, absolute_bkg = [len(s_ev)], [len(b_ev)]
     normalized_sig, normalized_bkg = [s_w.sum()], [b_w.sum()]
+    w_sig, w_bkg = _sample_weight(s_w), _sample_weight(b_w)
 
     for index, name in enumerate(cuts_names):
         cutfunc = next((func for n, func in cuts if n == name), None)
@@ -921,34 +928,22 @@ def create_table_cuts( sig_events, sig_weights, sig_true_events, sig_labels, sig
         f.write("\\hline\n")
         f.write("Cut & Signal Events & Background Events \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {absolute_sig[0]} & {absolute_bkg[0]} \\\\\n")
+        f.write(f"Initial & {absolute_sig[0]} $\\pm$ {np.sqrt(absolute_sig[0]):.2f} & {absolute_bkg[0]} $\\pm$ {np.sqrt(absolute_bkg[0]):.2f} \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {absolute_sig[index+1]} & {absolute_bkg[index+1]} \\\\\n")
+            f.write(f"{short_name} & {absolute_sig[index+1]} $\\pm$ {np.sqrt(absolute_sig[index+1]):.2f} & {absolute_bkg[index+1]} $\\pm$ {np.sqrt(absolute_bkg[index+1]):.2f} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
-    # with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
-    #     # setup a latex table
-    #     f.write("\\begin{tabular}{|c|c|c|}\n")
-    #     f.write("\\hline\n")
-    #     f.write("Cut & Signal Events & Background Events \\\\\n")
-    #     f.write("\\hline\n")
-    #     f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} \\\\\n")
-    #     for index, name in enumerate(cuts_names):
-    #         short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-    #         f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} \\\\\n")
-    #     f.write("\\hline\n")
-    #     f.write("\\end{tabular}\n")
     with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
         # setup a latex table
         f.write("\\begin{tabular}{|c|c|c|c|c|}\n")
         f.write("\\hline\n")
         f.write("Cut & Signal Events & Background Events & Efficiency & Purity \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {normalized_sig[0]:.2f} & {normalized_bkg[0]:.2f} & {100*normalized_sig[0]/(normalized_sig[0] + 1e-8):.2f}% & {100*normalized_sig[0]/(normalized_sig[0] +normalized_bkg[0] + 1e-8):.2f}% \\\\\n")
+        f.write(f"Initial & {normalized_sig[0]:.2f} $\\pm$ {w_sig*np.sqrt(absolute_sig[0]):.2f} & {normalized_bkg[0]:.2f} $\\pm$ {w_bkg*np.sqrt(absolute_bkg[0]):.2f} & {100*normalized_sig[0]/(normalized_sig[0] + 1e-8):.2f}% & {100*normalized_sig[0]/(normalized_sig[0] +normalized_bkg[0] + 1e-8):.2f}% \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} & {normalized_bkg[index+1]:.2f} & {100*normalized_sig[index+1]/(normalized_sig[0] + 1e-8):.2f}% & {100*normalized_sig[index+1]/(normalized_sig[index+1] + normalized_bkg[index+1] + 1e-8):.2f}% \\\\\n")
+            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} $\\pm$ {w_sig*np.sqrt(absolute_sig[index+1]):.2f} & {normalized_bkg[index+1]:.2f} $\\pm$ {w_bkg*np.sqrt(absolute_bkg[index+1]):.2f} & {100*normalized_sig[index+1]/(normalized_sig[0] + 1e-8):.2f}% & {100*normalized_sig[index+1]/(normalized_sig[index+1] + normalized_bkg[index+1] + 1e-8):.2f}% \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
 
@@ -960,8 +955,9 @@ def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labe
     # Work on copies
     s_ev, s_w, s_true, s_lab, s_fnames = sig_events, sig_weights, sig_true_events, sig_labels, sig_filenames
 
-    absolute_sig = [len(s_ev)] 
+    absolute_sig = [len(s_ev)]
     normalized_sig = [s_w.sum()]
+    w_sig = _sample_weight(s_w)
     events_target_present_list = []
     if events_target is not None:
         # get the list of the intersection of events_target and s_ev[aggregate_dict["eventID"]]
@@ -997,10 +993,10 @@ def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labe
         f.write("\\hline\n")
         f.write("Cut & Run Events \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {absolute_sig[0]} \\\\\n")
+        f.write(f"Initial & {absolute_sig[0]} $\\pm$ {np.sqrt(absolute_sig[0]):.2f} \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {absolute_sig[index+1]} \\\\\n")
+            f.write(f"{short_name} & {absolute_sig[index+1]} $\\pm$ {np.sqrt(absolute_sig[index+1]):.2f} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
     with open(os.path.join(output_folder, "cut_table_normalized.txt"), "w") as f:
@@ -1009,10 +1005,10 @@ def create_table_cuts_single( sig_events, sig_weights, sig_true_events, sig_labe
         f.write("\\hline\n")
         f.write("Cut & Signal Events \\\\\n")
         f.write("\\hline\n")
-        f.write(f"Initial & {normalized_sig[0]:.2f} \\\\\n")
+        f.write(f"Initial & {normalized_sig[0]:.2f} $\\pm$ {w_sig*np.sqrt(absolute_sig[0]):.2f} \\\\\n")
         for index, name in enumerate(cuts_names):
             short_name = shorter_cut_names[index] if index < len(shorter_cut_names) else name
-            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} \\\\\n")
+            f.write(f"{short_name} & {normalized_sig[index+1]:.2f} $\\pm$ {w_sig*np.sqrt(absolute_sig[index+1]):.2f} \\\\\n")
         f.write("\\hline\n")
         f.write("\\end{tabular}\n")
     if events_target is not None:

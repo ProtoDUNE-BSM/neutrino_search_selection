@@ -1,0 +1,52 @@
+{
+    "folders": {
+        "mother_folder_run": [
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29424/fnal/18147", 
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29424/fnal/18148", 
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29424/fnal/18149", 
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29425/fnal/18198", 
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29425/fnal/18199", 
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29425/fnal/18200",
+            "/pnfs/dune/scratch/users/dpullia/2026/official_2_29425/fnal/18201" 
+
+        ],
+        "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/single/official_2_v2/"
+    },
+    "analysis": {
+        "apply_cuts": false,
+        "nbins": 40,
+        "TP_RATE": "all"
+    },
+    "run": {
+        "SPILL_STATUS": "on",
+        "label": "On spill data",
+        "GET_TRUTH": false,
+        "WEIGHT_MODE": "1hour",
+        "USE_COMBINED": true,
+        "TP_RATE": "all",
+        "tp_monitor_files":[
+            "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29424.csv",
+            "/exp/dune/app/users/dpullia/unblinding/all_beam_monitor_29425.csv"
+        ],
+        "run_parameters":{
+            "spill_on":{
+                "total_POT":4.059E16,
+                "total_time": 16.5387
+            },
+            "spill_off":{
+                "total_POT": 0,
+                "total_time": 44.6886
+            },
+            "spill_all":{
+                "total_POT": 4.059E16,
+                "total_time": 61.2273
+            }
+        }
+    },
+    "timing": {
+        "total_time_high_tp_rate": 0,
+        "total_time_low_tp_rate": 0,
+        "total_time_all_tp_rate": 16.5387
+    },
+    "events_target":[5408, 60582, 24584, 21186, 42646, 22013, 68237, 56531, 1248, 2914, 15535, 21419, 74839, 80655, 71703]
+}

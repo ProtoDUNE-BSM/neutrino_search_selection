@@ -1,0 +1,14 @@
+{
+    "old": {
+        "label": "old_data_old_mc_old_cuts",
+        "csv": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/old_data_old_mc_old_cuts_all_cuts_True/events_passing_all_cuts.csv",
+        "run_regex": "/fnal/data/(\\d+)/1/\\d+/",
+        "job_id_to_run": {"2369": 29424, "2370": 29425}
+    },
+    "new": {
+        "label": "official_3",
+        "csv": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/official_3_all_cuts_True/events_passing_all_cuts.csv",
+        "run_regex": "/official_3_(\\d+)/fnal/\\d+/1/\\d+/"
+    },
+    "output_folder_base": "/exp/dune/app/users/dpullia/neutrino_search_selection/out/standard_data_data/comparison_official_3_vs_old"
+}

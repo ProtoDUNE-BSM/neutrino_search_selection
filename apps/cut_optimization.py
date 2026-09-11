@@ -361,9 +361,42 @@ def load_best_params_from_results(results_path, threshold_boundaries):
     return np.array([values[k] for k in threshold_boundaries])
 
 
+def compute_cut_mask(events, cut_thresholds, skip_cut=None):
+    # Vectorised equivalent of apply_all_cuts: every cut here is a per-event
+    # condition that doesn't depend on which other events survive, so AND-ing
+    # all conditions on the full array gives the same surviving set as
+    # sequential shrink-and-reindex, without the O(N) Python-level list
+    # comprehensions apply_all_cuts uses to keep true_events/labels/filenames
+    # in sync at each step. Used in the MCMC hot path, where only summed
+    # weights are needed, not the filtered arrays themselves.
+    mask = np.ones(len(events), dtype=bool)
+    if skip_cut != "neutrino_pfp_in_slice":
+        mask &= events[:, aggregate_dict["numberOfPFParticles"]] >= cut_thresholds["neutrino_pfp_in_slice"]
+    if skip_cut != "vertex_fiducial_volume":
+        mask &= (events[:, aggregate_dict["vertexZ"]] >= cut_thresholds["vertex_z_min"]) & \
+                (events[:, aggregate_dict["vertexY"]] <= cut_thresholds["vertex_y_max"])
+    if skip_cut != "daughter_particles":
+        mask &= events[:, aggregate_dict["numberOfPFParticles"]] >= cut_thresholds["num_pf_particles_min"]
+    if skip_cut != "max_directionZ":
+        mask &= np.maximum(events[:, aggregate_dict["directionZ"]], events[:, aggregate_dict["directionZ2"]]) > cut_thresholds["direction_z_max"]
+    if skip_cut != "energy_first10cm":
+        mask &= events[:, aggregate_dict["energyDepositedInFirst10cm"]] > cut_thresholds["energy_first10cm_min"]
+    if skip_cut != "energy_fifth10cm":
+        mask &= events[:, aggregate_dict["energyDepositedInFifth10cm"]] > cut_thresholds["energy_fifth10cm_min"]
+    if skip_cut != "energy_fifteenth10cm":
+        mask &= events[:, aggregate_dict["energyDepositedInFifteenth10cm"]] > cut_thresholds["energy_fifteenth10cm_min"]
+    if skip_cut != "ROI_Z_size":
+        mask &= (events[:, aggregate_dict["zROIEnd"]] - events[:, aggregate_dict["zROIStart"]]) > cut_thresholds["roi_z_size_min"]
+    if skip_cut != "ROI_Z_starting_point_close_to_vertexZ":
+        mask &= np.abs(events[:, aggregate_dict["vertexZ"]] - events[:, aggregate_dict["zROIStart"]] * cut_thresholds["roi_z_scale_factor"]) < cut_thresholds["roi_z_vertex_distance_max"]
+    if skip_cut != "Neutrino_Tail_Length_Density":
+        mask &= (events[:, aggregate_dict["lengthOfMuonTrack"]] / (events[:, aggregate_dict["zROIStart"]] * cut_thresholds["roi_z_scale_factor"])) < cut_thresholds["tail_length_density_max"]
+    return mask
+
+
 def log_likelihood(theta, mc_events, mc_weights, data_events, data_weights):
     # Unpack the parameters
-    vertex_z_min, vertex_y_max, num_pf_particles_min, direction_z_max, energy_first10cm_min, energy_fifth10cm_min, energy_fifteenth10cm_min, roi_z_size_min, roi_z_vertex_distance_max, tail_length_density_max = theta    
+    vertex_z_min, vertex_y_max, num_pf_particles_min, direction_z_max, energy_first10cm_min, energy_fifth10cm_min, energy_fifteenth10cm_min, roi_z_size_min, roi_z_vertex_distance_max, tail_length_density_max = theta
     # Apply the cuts to the MC and off spill data events
     cut_thresholds = {
         "neutrino_pfp_in_slice": 0,
@@ -374,31 +407,25 @@ def log_likelihood(theta, mc_events, mc_weights, data_events, data_weights):
         "energy_first10cm_min": energy_first10cm_min,
         "energy_fifth10cm_min": energy_fifth10cm_min,
         "energy_fifteenth10cm_min": energy_fifteenth10cm_min,
-        "roi_z_size_min": roi_z_size_min, 
+        "roi_z_size_min": roi_z_size_min,
         "roi_z_vertex_distance_max": roi_z_vertex_distance_max,
         "tail_length_density_max": tail_length_density_max,
         "roi_z_scale_factor": 460/100
     }
-    
-    data_before_cuts = np.sum(data_weights)
-    mc_before_cuts = np.sum(mc_weights)
-    
-    mc_events_cut, mc_weights_cut, mc_true_events_cut, mc_labels_cut, mc_filenames_cut, data_events_cut, data_weights_cut, data_labels_cut, data_filenames_cut = apply_all_cuts(
-        mc_events, mc_weights, mc_true_events, mc_labels, mc_filenames,
-        data_events, data_weights, data_labels, data_filenames,
-        cut_thresholds=cut_thresholds
-    )
 
-    if len(data_weights_cut) < 5 or np.sum(mc_weights_cut) < 3:
+    mc_mask = compute_cut_mask(mc_events, cut_thresholds)
+    data_mask = compute_cut_mask(data_events, cut_thresholds)
+    mc_weights_cut_sum = np.sum(mc_weights[mc_mask])
+    data_weights_cut_sum = np.sum(data_weights[data_mask])
+    n_data_cut = np.count_nonzero(data_mask)
+
+    if n_data_cut < 5 or mc_weights_cut_sum < 3:
         return -1e10 # if too few events pass the cuts, return a very low likelihood to discourage the optimizer from going in that direction
-
-    efficiency = np.sum(mc_weights_cut) / mc_before_cuts if mc_before_cuts > 0 else 0
-    purity = np.sum(mc_weights_cut) / (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) if (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) > 0 else 0
 
     T_on = 7.65 + 8.88
     T_off = 44.688
-    n_on = (np.sum(mc_weights_cut)+np.sum(data_weights_cut))*T_on
-    n_off = np.sum(data_weights_cut)*T_off
+    n_on = (mc_weights_cut_sum + data_weights_cut_sum) * T_on
+    n_off = data_weights_cut_sum * T_off
     mu = n_off * (T_on / T_off)
     significance = 2 * (n_on * np.log(n_on / mu) + mu - n_on)
 
@@ -410,7 +437,7 @@ def log_likelihood(theta, mc_events, mc_weights, data_events, data_weights):
 
 def log_likelihood_and_values(theta, mc_events, mc_weights, data_events, data_weights):
     # Unpack the parameters
-    vertex_z_min, vertex_y_max, num_pf_particles_min, direction_z_max, energy_first10cm_min, energy_fifth10cm_min, energy_fifteenth10cm_min, roi_z_size_min, roi_z_vertex_distance_max, tail_length_density_max = theta    
+    vertex_z_min, vertex_y_max, num_pf_particles_min, direction_z_max, energy_first10cm_min, energy_fifth10cm_min, energy_fifteenth10cm_min, roi_z_size_min, roi_z_vertex_distance_max, tail_length_density_max = theta
     # Apply the cuts to the MC and off spill data events
     cut_thresholds = {
         "neutrino_pfp_in_slice": 0,
@@ -421,41 +448,36 @@ def log_likelihood_and_values(theta, mc_events, mc_weights, data_events, data_we
         "energy_first10cm_min": energy_first10cm_min,
         "energy_fifth10cm_min": energy_fifth10cm_min,
         "energy_fifteenth10cm_min": energy_fifteenth10cm_min,
-        "roi_z_size_min": roi_z_size_min, 
+        "roi_z_size_min": roi_z_size_min,
         "roi_z_vertex_distance_max": roi_z_vertex_distance_max,
         "tail_length_density_max": tail_length_density_max,
         "roi_z_scale_factor": 460/100
     }
-    
 
-    data_before_cuts = np.sum(data_weights)
     mc_before_cuts = np.sum(mc_weights)
-    
-    mc_events_cut, mc_weights_cut, mc_true_events_cut, mc_labels_cut, mc_filenames_cut, data_events_cut, data_weights_cut, data_labels_cut, data_filenames_cut = apply_all_cuts(
-        mc_events, mc_weights, mc_true_events, mc_labels, mc_filenames,
-        data_events, data_weights, data_labels, data_filenames,
-        cut_thresholds=cut_thresholds
-    )
 
-    efficiency = np.sum(mc_weights_cut) / mc_before_cuts if mc_before_cuts > 0 else 0
-    purity = np.sum(mc_weights_cut) / (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) if (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) > 0 else 0
+    mc_mask = compute_cut_mask(mc_events, cut_thresholds)
+    data_mask = compute_cut_mask(data_events, cut_thresholds)
+    mc_weights_cut_sum = np.sum(mc_weights[mc_mask])
+    data_weights_cut_sum = np.sum(data_weights[data_mask])
+
+    efficiency = mc_weights_cut_sum / mc_before_cuts if mc_before_cuts > 0 else 0
+    purity = mc_weights_cut_sum / (mc_weights_cut_sum + data_weights_cut_sum) if (mc_weights_cut_sum + data_weights_cut_sum) > 0 else 0
     f1_score = 2 * (efficiency * purity) / (efficiency + purity) if (efficiency + purity) > 0 else 0
 
     # compute significance as well
     T_on = 7.65 + 8.88
     T_off = 44.688
-    n_on = (np.sum(mc_weights_cut)+np.sum(data_weights_cut))*T_on
-    n_off = np.sum(data_weights_cut)*T_off
+    n_on = (mc_weights_cut_sum + data_weights_cut_sum) * T_on
+    n_off = data_weights_cut_sum * T_off
     mu = n_off * (T_on / T_off)
     significance = 2 * (n_on * np.log(n_on / mu) + mu - n_on)
 
     if not np.isfinite(significance):
         significance = 0
 
-
-
-    total_mc_events_after_cuts = np.sum(mc_weights_cut)
-    total_data_events_after_cuts = np.sum(data_weights_cut)
+    total_mc_events_after_cuts = mc_weights_cut_sum
+    total_data_events_after_cuts = data_weights_cut_sum
     return f1_score, efficiency, purity, total_mc_events_after_cuts, total_data_events_after_cuts, significance
 
 
@@ -799,18 +821,17 @@ for i, key in enumerate(threshold_boundaries.keys()):
     for value in param_values:
         cut_thresholds = default_cut_thresholds.copy()
         cut_thresholds[key] = value
-        mc_events_cut, mc_weights_cut, mc_true_events_cut, mc_labels_cut, mc_filenames_cut, data_events_cut, data_weights_cut, data_labels_cut, data_filenames_cut = apply_all_cuts(
-            mc_events, mc_weights, mc_true_events, mc_labels, mc_filenames,
-            data_events, data_weights, data_labels, data_filenames,
-            cut_thresholds=cut_thresholds
-        )
-        efficiency = np.sum(mc_weights_cut) / np.sum(mc_weights) if np.sum(mc_weights) > 0 else 0
-        purity = np.sum(mc_weights_cut) / (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) if (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) > 0 else 0
+        mc_mask = compute_cut_mask(mc_events, cut_thresholds)
+        data_mask = compute_cut_mask(data_events, cut_thresholds)
+        mc_weights_cut_sum = np.sum(mc_weights[mc_mask])
+        data_weights_cut_sum = np.sum(data_weights[data_mask])
+        efficiency = mc_weights_cut_sum / np.sum(mc_weights) if np.sum(mc_weights) > 0 else 0
+        purity = mc_weights_cut_sum / (mc_weights_cut_sum + data_weights_cut_sum) if (mc_weights_cut_sum + data_weights_cut_sum) > 0 else 0
         f1_score = 2 * (efficiency * purity) / (efficiency + purity) if (efficiency + purity) > 0 else 0
         T_on = 7.65 + 8.88
         T_off = 44.688
-        n_on = (np.sum(mc_weights_cut) + np.sum(data_weights_cut)) * T_on
-        n_off = np.sum(data_weights_cut) * T_off
+        n_on = (mc_weights_cut_sum + data_weights_cut_sum) * T_on
+        n_off = data_weights_cut_sum * T_off
         mu = n_off * (T_on / T_off) if n_off > 0 else 1e-10
         sig_val = 2 * (n_on * np.log(n_on / mu) + mu - n_on) if n_on > 0 and mu > 0 else 0
         if not np.isfinite(sig_val):
@@ -819,8 +840,8 @@ for i, key in enumerate(threshold_boundaries.keys()):
         efficiencies.append(efficiency)
         purities.append(purity)
         significances.append(sig_val)
-        total_mc.append(np.sum(mc_weights_cut))
-        total_data.append(np.sum(data_weights_cut))
+        total_mc.append(mc_weights_cut_sum)
+        total_data.append(data_weights_cut_sum)
 
     fig, axes = plt.subplots(1, 4, figsize=(15, 4))
     axes[0].plot(param_values, scores, color='blue', linewidth=2)
