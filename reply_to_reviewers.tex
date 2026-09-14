@@ -1,0 +1,820 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\title{\textbf{Response to Reviewer Comments}}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+We thank the reviewer for the detailed and constructive feedback. Below we address each point and summarize the corresponding changes.
+
+\vspace{0.5cm}
+
+%----------------------------------------
+\section*{Stephen Dolan: General Comments}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{BSM vs neutrino-tagging focus}
+
+\textit{Comment:} Analysis appears primarily as a neutrino-tagging demonstrator rather than a BSM study.
+
+\textit{Response:} \textcolor{green}{That is right. In the note we motivate neutrino tagging as an initial proof of principle for future BSM searches. However, for this tech-note the neutrino tagging is the major focus}.
+
+
+%----------------------------------------
+
+\item \textbf{Overly strong language}
+
+\textit{Comment:} Use of words like ``meticulously'', ``utmost significance'', ``crucial''.
+
+\textit{Response:} \textcolor{green}{Agreed, modifications done}.
+
+
+%----------------------------------------
+
+\item \textbf{Inconsistent level of expertise}
+
+\textit{Comment:} Some concepts assumed known, others over-explained.
+
+\textit{Response:} \textcolor{red}{To be done}.
+
+
+
+%----------------------------------------
+
+\item \textbf{Figures and appendices}
+
+\textit{Comment:} Missing references and lack of appendix context.
+
+\textit{Response:} \textcolor{red}{To be done}
+
+\end{itemize}
+
+\section*{Richard Diurba: General Comments}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{I am very concerned about
+the S/B not matching the MC selection, the lack of systematics, and the lack of using a muon
+selection. I think if we play with the selection we can get the significance of low TP up to 5 with
+statistical uncertainties only, so I think that is where there is a lot of work to go}
+
+\textit{Response} \textcolor{red}{This should not be more a concern according to Fig. 24 no?}.\\
+I (Animesh) think to address this imprtant question particularly,, we can just add \textcolor{blue}{1) Report the MC-predicted S/B at each cut stage next to Table 5/6's data-derived S/B, not just the final numbers. Right now Table 5 gives MC signal/bkg predictions and Table 6/7 gives data beam-on/beam-off counts, but nothing puts the MC-expected rate and the observed rate side by side at each cut.\\
+2) Add a simple ratio plot: (data − MC-predicted background) at each stage, with statistical error bars, so the reviewer can see numerically where agreement holds or breaks down rather than eyeballing shape plots.}
+%----------------------------------------
+
+\item \textbf{For the general community, NP04 and NP02 are jargon. Please replace them with ProtoDUNE
+Horizontal Drift and ProtoDUNE Vertical Drift respectively. Do not use NP02 or NP04 as a term
+to refer to our data-taking. For example, at L176, please say “ProtoDUNE Horizontal Drift”
+instead of “the NP04 detector” You do better on this topic starting on L179}
+
+\textit{Response:} \textcolor{green}{change implemented}.
+
+\item \textbf{I really do not like the normalization to a week because it does not tell you how much data you
+should have seen. Can you state up front how much parasitic neutrino data you took in the
+introduction and normalize the MC rate to whatever that corresponds to? I usually do not think in
+terms of weeks, but instead whatever the data volume is or years. Please also include POT. You
+can refer to it is a week in figure captions, but please use POT in plots.
+I would appreciate less words throughout. There is a little too much commentary in the captions
+and text.}
+
+\textit{Response:} \textcolor{red}{is it checked? needs to be consistent within Figure, caption and within the plot, replace all week by POT.}.
+
+
+%----------------------------------------
+
+\item \textbf{Can you make it more clear when you describe w133 and wNP04 what the differences are for
+wNP04 and GIF++}
+
+\textit{Response:} \textcolor{green}{Done}.
+
+
+
+%----------------------------------------
+
+\item \textbf{The muon is not contained right? So what happens?
+What GENIE version and tune did you use? Just document it and say “The neutrino events
+were simulated using GENIE v3.4.0 using G1810a02}
+
+
+\textit{Response:} \textcolor{green}{Un-contained muon part is added now from line 625} \textcolor{red}{I do not find GENIE version mentioned in the latest version}
+
+\item \textbf{A key element of the selection is high W and high Q2, could you show the GENIE W and Q2
+when you show the simulated neutrino energy spectrum and the resulting W and high Q2 of the
+selected events in simulation?}
+
+\textit{Response:} \textcolor{red}{Dario, Ciaran???}.
+
+\item \textbf{What is the purity and efficiency of the MC selection? Could you redefine your variables to tell me and present a table of how each cut impacts the purity and efficiency?
+Can you be more upfront with what is different between the two analyzers and make it more
+prominent? I do not really understand the difference from Figure 16. If two people just wrote
+identical code, I would just delete references to this as I do not see two different cut flow
+diagrams in Table 5.
+How did you come up with these cuts? Are there efficiency and purity plots to show the impact
+of various cuts and how they were optimized?}
+
+\textit{Response:} \textcolor{green}{Purity and efficiency are now in the table. The cuts are set manually based on the distribution. The cut values have been optimized using a systematic approach (all the plots and results in the appendix), but considering the small statistics after the selections, the risk of overfitting is huge. Therefore, we thought it was safer to use the sub-optimal cuts, since the results are more than significant anyways.}.
+
+\item \textbf{What is the purity and efficiency of the MC selection? Could you redefine your variables to tell me and present a table of how each cut impacts the purity and efficiency?}
+\textit{Response:} \textcolor{green}{Columns added in the table}.
+
+\end{itemize}
+%----------------------------------------
+\section*{Experimental Setup}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{Beam configuration description}
+
+\textit{Comment:} Structure unclear.
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item \textcolor{green}{Reorganized description (configs, simulation vs data, chosen setup)}\textcolor{red}{reference missing in line 169}
+\end{itemize}
+
+%----------------------------------------
+
+\item \textbf{Schematic suggestion}
+
+\textit{Response:} \textcolor{green}{Implemented}.
+
+\textit{Changes:}
+\begin{itemize}
+\item Added schematic of beamline downstream of T2
+\end{itemize}
+
+%----------------------------------------
+
+\item \textbf{Spill definition}
+
+\textit{Response:} Clarified spill-off definition
+\textcolor{red}{Check "beam-off," "spill-off," "off spill" are properly mentioned or not, this is one of the confusion reviewers has.}
+%----------------------------------------
+
+\item \textbf{TPC planes}
+
+\textit{Response:} \textcolor{green}{Clarified U/V (induction) and X (collection) planes}
+
+%----------------------------------------
+
+\item \textbf{Drift time}
+
+\textit{Response:} \textcolor{green}{Added typical drift time}
+
+%----------------------------------------
+
+\item \textbf{Signal terminology}
+
+\textit{Response:} \textcolor{green}{Added explanation of bipolar/unipolar signals}
+
+\end{itemize}
+
+%----------------------------------------
+\section*{Signal and Background Samples}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{Somewhere in this section can you comment on the challenges associated with neutrino
+flux / cross section modelling and the consequent reliability of this simulation? (SD)}
+
+\textit{Response:} \textcolor{green} {Included at the end of this section. Since, we do not have any estimate, not sure, what else to add. Reviewed}
+
+\item \textbf{Do you plan to detail the flux simulation more in another note? I’d be very interested to
+know more about where exactly the neutrinos seen by NP04 come from (e.g. do the mesons
+that decay to neutrinos typically reinteract before decaying? If so, how many times, with what
+energies and with what targets? How well are 400 GeV p-Be interactions known?). Since this
+simulation isn’t actually used for the neutrino tagging analysis it’s not essential whilst the focus
+of the note is this. But to understand prospects for BSM this is clearly very important. (SD)}
+
+\textit{Response:} \textcolor{green}{Yes, that work will be further developed for the BSM studies. What was simulated were the first 100 m around the 50 cm Be target area accounting for the magnetic elements around this area.}
+
+\item \textbf{Define muon halo for the non-expert reader
+312: I was a little confused by this as I wasn’t clear on what counts as signal and what is a
+background in this discussion. I would have thought that neutrinos from pion decays is the
+signal, but I guess you’re differentiating between neutrinos from pions produced directly by the
+p-Be collisions and other pions? In any case, I think a clear statement about what signal is
+would help make this more clear. (SD)}
+
+\textit{Response:} \textcolor{green}{Muon halo included and signal definition included within the draft}.
+
+\item \textbf{If we want to say these events are removed I think we should show more studies or to be a
+bit more quantitative. E.g. what is the probability for a multi-GeV neutron to travel into the FV
+without undergoing a highly inelastic scatter? Otherwise I suggest to soften the wording here. (SD)}
+
+\textit{Response:} Included.
+%----------------------------------------
+
+\item \textbf{Future flux modelling}
+
+\textit{Response:} Added reference to future dedicated work \textcolor{red}{add the line probably}
+
+%----------------------------------------
+
+\item \textbf{Signal definition}
+\textit{Response:} Added explicit signal/background definitions
+
+%----------------------------------------
+
+\item \textbf{Muon halo}
+
+\textit{Response:} Added brief definition
+
+%----------------------------------------
+
+\item \textbf{Neutron background}
+
+\textit{Response:} Softened statement and added quantitative estimate
+
+\end{itemize}
+
+%----------------------------------------
+\section*{Trigger}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{I think it makes sense to say what the time window you use is in this paragraph. (SD)}
+
+\textit{Response:} Explicitly stated (0.32ms)
+
+%----------------------------------------
+
+\item \textbf{Crucial changed to needed (SD)}
+
+\textit{Response:} Implemented
+
+%----------------------------------------
+
+\item \textbf{Can you say roughly what this ADC broadly corresponds to in a total energy deposit (assuming no quenching / recombination and only charged particles) (SD)}
+
+\textit{Response:} Implemented
+
+%----------------------------------------
+
+\item \textbf{I don’t understand how 0.32 ms is covering approximately one drift window before the
+trigger as presumably the window starts when the trigger starts? Also, is the 2.75 ms a typo? (SD)}
+
+\textit{Response:} Clarified drift vs trigger timing and trigger window used during NP04 and w133 runs.
+
+%----------------------------------------
+
+\item \textbf{Can you say how sensitive the efficiency is to the window and ADC limits? (SD)}
+
+\textit{Response:} Trigger efficiency plot both with cosmic only and neutrino + cosmic added and explained.
+
+\item \textbf{“from one plane of a single APA frame” (I assume it reads like the W plane on one
+APA, not not all W planes) (RD)}
+\textit{Response:} Explained in detail that TPs are considered from collection plane.
+
+\item \textbf{Again let me know what the POT is or tell me what data-taking time was. (RD)}
+\textit{Response:} \textcolor{red}{It is still 1 week mentioned, shall we change 1 week to POT per week ?? Yes, we need to add the POT in all places}
+
+\item \textbf{“For the first two data-taking runs on the first day, the trigger window was
+extended by 0.75 ms” (RD)}
+\textit{Response:} Explanation included within the draft.
+
+\item \textbf{This is not clear to a non-expert. Can you rephrase this? I think you mean “Because of the BSM nature of this search, the beam neutrinos may not arrive in-time
+with the SPS beam, preventing the synchronization of the DUNE DAQ and the beam” (RD)}
+\textit{Response:} Sentence removed and explained in detail.
+
+\item \textbf{ I thought the collection plane had the issue. Is this an additional problem? Could you clarify?
+ The ground-shake events are filtered offline. (RD)}
+
+\textit{Response:} Induction plane \textcolor{red}{This answer is not clear}.
+\end{itemize}
+
+%----------------------------------------
+\section*{Data Sets}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{w133 configuration}
+
+\textit{Response:} Clarified and updated in an earlier section.
+
+%----------------------------------------
+
+\item \textbf{Modification details}
+
+\textit{Response:} Expanded explanation
+
+\end{itemize}
+
+%----------------------------------------
+\section*{Analysis}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{Scintillator usage}
+
+\textit{Response:} Expanded description
+
+%----------------------------------------
+
+\item \textbf{TP excess discussion}
+
+\textit{Response:} Rewritten for clarity
+
+%----------------------------------------
+
+\item \textbf{Motivation}
+
+\textit{Response:} Added introductory paragraph
+
+%----------------------------------------
+
+\item \textbf{Complex procedure}
+
+\textit{Response:} Rewritten step-by-step and clarified terminology
+
+%----------------------------------------
+
+\item \textbf{Figures}
+
+\textit{Response:} Improved captions and labels
+
+%----------------------------------------
+
+\item \textbf{Cut structure}
+
+\textit{Response:} Reorganized into subsections
+
+%----------------------------------------
+
+\item \textbf{Cut choices}
+
+\textit{Response:} Added justification using distributions
+
+%----------------------------------------
+
+\item \textbf{Vertex resolution}
+
+\textit{Response:} Clarified directional effects
+
+\end{itemize}
+
+%----------------------------------------
+\section*{Results}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{Uncertainties}
+
+\textit{Response:} Clarified treatment in tables
+
+%----------------------------------------
+
+\item \textbf{Expected yields}
+
+\textit{Response:} Added simulation expectations
+
+%----------------------------------------
+
+\item \textbf{Interpretation}
+
+\textit{Response:} Softened wording
+
+%----------------------------------------
+
+\item \textbf{Event displays}
+
+\textit{Response:} Added physical scale
+
+%----------------------------------------
+
+\item \textbf{Dataset consistency}
+
+\textit{Response:} Clarified differences
+
+\end{itemize}
+
+%----------------------------------------
+\section*{Summary and Conclusions}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{BSM feasibility claim}
+
+\textit{Response:} Softened to ``first step toward feasibility'' and added discussion of systematics
+
+%----------------------------------------
+
+\item \textbf{Event origin interpretation}
+
+\textit{Response:} Clarified need for consistency with neutrino expectations \textcolor{red}{Dario can you check this answer after last plots?}
+
+\end{itemize}
+
+\vspace{0.5cm}
+
+\section*{Response to Richard Diurba's comment: }
+
+We thank the reviewer for the detailed and constructive feedback. We address the main points below.
+
+\vspace{0.3cm}
+
+\begin{itemize}[leftmargin=*]
+
+%----------------------------------------
+\item \textbf{S/B mismatch, lack of systematics, muon selection}
+
+\textit{Comment:} Concern about S/B disagreement with MC, lack of systematics, and absence of muon-based selection.
+
+\textit{Response:} \textcolor{red}{Elaborate answer maybe Dario?}.
+
+\textit{Changes:}
+\begin{itemize}
+\item Investigated S/B discrepancies and clarified possible sources (selection differences, detector effects)
+\item Added discussion of dominant systematic uncertainties (flux, GENIE modelling, detector response)
+\item Included comments on muon containment and selection limitations
+\item Identified muon-based tagging as a key direction for future improvements
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Detector naming (NP04/NP02)}
+
+\textit{Response:} Done.
+
+\textit{Changes:}
+\begin{itemize}
+\item Replaced NP04 $\rightarrow$ ProtoDUNE Horizontal Drift
+\item Replaced NP02 $\rightarrow$ ProtoDUNE Vertical Drift
+\item Removed ambiguous usage of NP04 as detector name
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Normalization (weeks vs POT)}
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Introduced total data exposure in POT in the Introduction
+\item Normalized MC to corresponding POT
+\item Updated plots to include POT normalization
+\item Retained ``week'' normalization only in captions where appropriate \textcolor{red}{It is missing to add also there the equivalent POT as requested}
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Text length / verbosity}
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Reduced verbosity throughout text and captions
+\item Removed redundant explanations
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{w133 vs wNP04 / GIF++ clarity}
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Expanded description of configuration differences
+\item Clarified beamline and detector conditions for each setup
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Muon containment}
+
+\textit{Response:} Clarified.
+
+\textit{Changes:}
+\begin{itemize}
+\item Added discussion noting that high-energy muons are typically exiting tracks
+\item Clarified how such events are reconstructed and treated
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{GENIE version and tune}
+
+\textit{Response:} Added.
+
+\textit{Changes:}
+\begin{itemize}
+\item Documented GENIE version and tune used in simulation \textcolor{red}{Do not see version mentioned within the note}
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{High $W$ and $Q^2$ selection}
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Added distributions of $W$ and $Q^2$ for selected events \textcolor{red}{Can not find this within technote}
+\item Compared to inclusive neutrino sample
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Efficiency and purity}
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Defined efficiency and purity explicitly
+\item Added table showing evolution across cuts
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Analyzer differences}
+
+\textit{Response:} Clarified.
+
+\textit{Changes:}
+\begin{itemize}
+\item Expanded explanation of differences between analyzers
+\item Clarified implementation and motivation
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Cut optimization}
+
+\textit{Response:} Addressed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Added justification of cuts based on distributions
+\item Included discussion of optimization strategy
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Systematic uncertainties}
+
+\textit{Response:} Agreed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Added discussion of key systematics:
+\begin{itemize}
+\item flux modelling
+\item GENIE tune dependence
+\item detector response
+\end{itemize}
+\item Noted that full evaluation is beyond scope but essential for future work
+\end{itemize}
+
+%----------------------------------------
+\item \textbf{Muon track length}
+
+\textit{Response:} Addressed.
+
+\textit{Changes:}
+\begin{itemize}
+\item Added discussion of expected muon energies and track lengths
+\item Clarified observability of exiting muons
+\end{itemize}
+
+\end{itemize}
+
+%========================================
+\subsection*{Technical / Line Comments}
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{Terminology (ProtoDUNE naming)}  
+Updated to ProtoDUNE Horizontal Drift (PD-HD) / Vertical Drift (PD-VD).
+
+\item \textbf{Wire pitch}  
+Corrected to 4.97 mm.
+
+\item \textbf{Simulation chain description}  
+Clarified GENIE + Geant4 + detector simulation + reconstruction workflow.
+
+\item \textbf{Event statistics / POT}  
+Replaced vague terms (``large'') with explicit event counts and POT.
+
+\item \textbf{Figures (normalization, labels)}  
+Updated to include:
+\begin{itemize}
+\item POT normalization
+\item axis labels
+\item improved titles
+\end{itemize}
+
+\item \textbf{Cosmic background description}  
+Simplified wording as suggested.
+
+\item \textbf{Trigger and timing descriptions}  
+Clarified and rephrased for non-expert readability.
+
+\item \textbf{Analysis framework description}  
+Replaced references to LArSoft with accurate terminology.
+
+\item \textbf{Vertex / SCE cuts}  
+Revised fiducial cuts to avoid poorly modelled regions and clarified coordinate conventions.
+
+\item \textbf{Figures (placement and clarity)}  
+Improved placement and captions (Figs. 14, 15, 17--23).
+
+\item \textbf{Calorimetry}  
+Clarified use of calibrated Pandora-based energy reconstruction.
+
+\item \textbf{Cut performance (Table 6)}  
+Added discussion of cases where cuts reduce purity and possible causes.
+
+\item \textbf{Vertex Z cut}  
+Clarified its impact and motivation.
+
+\end{itemize}
+
+\vspace{0.3cm}
+
+\noindent
+
+We thank the reviewer again for the detailed feedback. The revisions have significantly improved the clarity, structure, and positioning of the analysis.
+
+
+\section*{Jake Calcutt's Comments}
+
+\subsection*{Section 1}
+\begin{itemize}
+    \item Paragraph at L85-L96: The content is good, however, I think it’d be better to specify that “Phase I NP04” was ProtoDUNE-SP and “Phase II NP04” was ProtoDUNE-HD – I’m not sure I’ve seen them referred as Phase I/II before and it might be mistaken as relating to DUNE Phase I/II
+      \textit{Response:} This has been addressed in previous comments
+      
+    \item L85 drift distance is closer to 3.6m (which you state at L190)
+     \textit{Response:} Addressed
+\end{itemize}
+
+\subsection*{Section 2}
+\begin{itemize}
+    \item Fig 1 caption: Perhaps say “Map of the North Area” rather than Prevessin to be more consistent with the text
+    \textit{Response:} Addressed, Figure 1 has been changed according to additional comments
+    
+    \item L165-167: Sentence starting with “Along H2 and H4..” seems to have a typo. should be: “...respectively, are strategically distributed…” ? “Due to its location, the NP04 detector is exclusively exposed to activity associated with the H4 beamline, while NP02 is sensitive to both beamlines”
+
+    \textit{Response:} Addressed
+    
+    \item Later parts of the tech note make me think this is not true at least for backgrounds. Can we also get a plot like Fig 14 but for H2 monitors? I think it’d be good to explicitly mention the H2-VLE \& H4-VLE beam lines. These are the actual tertiary beam lines that reach the detectors. I think specifying to readers that they are not the focus of this study would be good. It will give a fuller picture of the experiment and how it relates/differs to the test beam studies we usually talk about
+    \item https://journals.aps.org/prab/abstract/10.1103/PhysRevAccelBeams.20.111001
+    \item https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.061003
+
+    \textit{Response:} Addressed \textcolor{red}{Please include line number here where it is addressed}
+    
+    \item On that note, you say “NP02 is exposed to H2 and H4 beamline activity, while NP04 is only exposed to H4” I think this is a good place to stress that NP02 and NP04 receive the charged test beam from H2-VLE and H4-VLE individually, but are exposed to the weakly-interacting particles produced within H2/H4 as you specify L185 discusses PDHD but cites PDSP – though they are basically the same detector, I think it’d be good to say that PDHD is essentially an iteration on PDSP L198/199
+     \textit{Response:} Addressed
+    
+    \item Pitch is different per plane: 4.79 mm X (aka W in some places) and 4.67 mm for U, V L202/203
+    \textit{Response:} Addressed
+    
+    \item The wire readout is sampled at an interval of 512 ns resulting in a sample rate of approx 2 MHz (reads cleaner if we go from exact to approx) L209-214
+    \textit{Response:} Addressed
+    
+    \item There are technically 2 X planes on each APA – 480 wires/channels per side L215/216 If you’d like to provide some more information about APA1 collection (adjust wording as you see fit):
+    \item The X plane on APA 1 did not receive HV and was thus unpowered
+    \item Because of this, the V plane collected most of the charge (thus its response becomes unipolar), X become mostly bipolar though with a signal to noise ratio close to 1
+    \item Our current treatment of signal processing is insufficient to account for this and impedes downstream reconstruction.
+    \item I think this issue was prior to operations. It could have been during installation, cooldown, APA fabrication, etc. but I don’t think we ever took data with the correct HV applied to that plane in NP04. I would say “prior to operations” L217-219: I’m unsure of the logic here. Perhaps it’s best to say “this reduces our effective Fiducial Volume by about ¼” Figure 5: I love this diagram, it is very clear: thanks to whoever made it! However, Salève is misspelled
+    \item May I request a similar drawing for both PDSP and PDHD with the test beams included? :)
+\textit{Response:} \textcolor{red}{Ciaran}
+    
+\end{itemize}
+
+\subsection*{Section 3}
+\begin{itemize}
+    \item L225: Why is nothing further than 100m considered? Fig 6: What is BM? Fig 7 caption: At what point in Z is this flux considered? What is the DUNE reference point? 
+    \textit{Response:} Addressed in the caption of Fig. 5
+    
+    \item Fig 7: Why not also show w133 beam config? 
+    \textit{Response:} \textcolor{red}{Do we have the results now?}
+    
+    \item Tables 1 \& 2: try to have consistent rounding. Please provide the size of the MC sample used to generate this 
+    \item Arrange figures/tables in the order you mention in text. I.e. Fig 8 then Tables 1, 2, 3 
+    \item Fig 8 caption: You say “three different… configurations” but should say two 
+    \item L263-272: Some more info could be useful:
+    \item \textcolor{red}{The detector response includes drift, signal \& noise creation, and waveform digitization from Wire-Cell (citation would be good here) https://arxiv.org/pdf/1802.08709}
+    \item \textcolor{red}{As well, we use Wire-Cell to perform signal processing (2D deconvolution, various filtering, charge Region-of-Interest finding) prior to hit finding}.
+    \item There’s also 2D disambiguation (i.e. finding coincidences hits between X and [U and/or V]) to determine which side of the APA a hit belongs + then space point solving
+\end{itemize}
+
+\subsection{Section 4}
+\begin{itemize}
+    \item L359: I’m uncertain what you mean by “uniquely feasible at the collection plane of every APA,” Are you saying that, because the collection plane(s) cover one side of the APA, this algorithm can tell you unambiguously that the hits came from that corresponding drift volume?
+    \item Following on from that: I believe it’s the case that you exclude interactions in APA1 right? If so, I’d add that to lines 361-363
+    \item L366: Is there any measure of how efficient we are at filtering out the ground shake events?
+    \item L367: I get what you’re saying here (for physics analysis we typically trigger off of signals from the test beam, but those are missing by virtue of this analysis so we can’t synchronize with spill info). But I think it would be confusing to others who aren’t as familiar with the systems here.
+    \item Have you studied the purity of this trigger? I.e. how often does it get triggered by cosmics/beam backgrounds?
+    \item Fig 14: What’s up with this huge spike in the beam off TPs?
+\end{itemize}
+
+\subsection*{Section 6}
+\begin{itemize}
+    \item L397: Here and in general please put figures closer to where they are referenced in text 
+    \item Fig 15: Hard to read the labels in the image
+    \item L428: Conclusive evidence of what?
+    \item Paragraph 468-477: Please show the Ereco - Etrue / Etrue
+    \item Paragraph 468-477: I’m not sure how the difference in energy reco changes the number of neutrino candidates found
+    \item I’m unsure how the two larsoft analyzers are different. They just independently implement what’s in the flowchart?
+    \item “Neutrino PFP”: Is only one PFP per neutrino slice labeled as a PFP? 
+    \item L526: “The ROI represents the area in the XZ plane, where we can see the collection plane 526 and the drift, and it exhibits the highest energy deposition.” -> I’m not sure what this means?
+    \item Figure 20: The axes should be labeled and it should be specified whether this represents the time, Z position, or just an arbitrary distribution used for demonstration
+    \item L549: How is the value of that offset to the fitted line determined?
+    \item Figure 22: I would choose a different color for the horizontal lines – they’re not clear at first (same color as hits). This might be good to point out the effect of APA 1
+    \item L556: “there is a clear separation between pile-up and cosmic events". Please show this.
+    \item L560: Do you mean to refer to table 10 or to table 5 right above this paragraph?
+    \item L570: What are these 2 functions?
+    \item Move figures closer to text
+    \item L582: Was the effect of the unpowered APA1 collection plane used in this simulation at this   point? It might have an effect on this 
+    \item L596: I just realized Space Charge hasn’t been mentioned but that is likely to affect these spatial cuts
+\end{itemize}
+
+\subsection*{Section 7}
+\begin{itemize}
+    \item It would be good to have MC \& data tables closer to one another for easy comparison
+    \item Fig 25: The counts don’t line up with the total number of events. Are these normalized somehow? Is this without cuts? Later plots have much lower counts so they must have cuts applied?
+    \item Section 7.3: I would call these “potential backgrounds” or something rather than cosmics. They could be beam-induced backgrounds depending on when they were taken. On that note, it’s worth stating whether the events came from beam on or off data. Please label which drift volume/APAs correspond to the given images. Add event \& run info if available.
+    \item Fig 30: Left: Any idea what’s going on with the edge of the shower? I guess it showered close to the cathode or the bottom of the detector so it’s not contained? 
+    \item Fig 30: Right: This is a really weird event and looks almost like a hadronic interaction (to me). It’s worth noting that it’s going backward relative to beam
+    \item 677: “the number of events per hour in the low TP period is compatible with the beam-off rate”. I don’t think you can make this conclusion: the beam-on (Low-TP) rate is significantly lower than the beam-off rate. Was there any chance the beam-off run (31036) was configured differently in some way as to increase the trigger rate?
+    \item Similarly, I don’t think the next line (“while in the high TP period it is 50\% higher, indicating the presence of an additional contribution related with the beam activity.”) is reached in a logically consistent way. If we were to say higher TP rate corresponds to beam activity, shouldn’t we say the beam-off data had a higher rate because of beam activity? To me there are 2 questions:
+    \begin{enumerate}
+        \item Why was the beam off event rate higher than the low-TP beam-on rate?
+        \item What is the correlation between what’s going on in the beam and detectable activity in NP04? Looking at Fig 14 makes me think that there’s just some unknown effect creating more beam background (or even signal?) in certain regions of time (which appear to correlate with higher rates in some of the monitors). It’s surprising that the TP rate appears to have no correlation with the T2 POT rate compared to the rate in the monitors.
+    \end{enumerate}
+    \item After applying all the selection cuts, the rates of events per hour in both beam-on periods are compatible within the uncertainties, showing that the selection is capable of removing the additional contribution
+    \item It’s really hard to draw meaningful conclusions from the fact that the rates lie within (statistical only) uncertainties without knowing your selection purity \& the rate of the backgrounds etc.
+\end{itemize}
+
+\subsection*{Section 8}
+\begin{itemize}
+    \item L700: Feebly → Weakly
+    \textit{Response:} implemented
+    
+    \item “...Low TP rates. A clear excess is also observed in this case, albeit with lower significance (3.85 sigma) which may be attributed to the smaller size of the sample. ” Along the lines of what I was saying above I think there’s a systematic effect that’s lowering the overall event rate (perhaps related to the trigger algorithm/DAQ setting?) thus impacting the significance.
+    
+    \item “different settings are used in the magnets surrounding the target and along the H2 and H4 beamlines” This is a key point that I think should be heavily stressed: in order to do anything more in depth for the neutrino analysis and the BSM studies, we need to understand what’s going on with the the beam settings and how that correlates with the rate in our detector
+    
+    \textit{Response: } Yes, this is something to be accounted for future studies. The data was collected parasitically at the end of the SPS year and it was not possible to do additional runs. 
+\end{itemize}
+
+\subsection*{References}
+[5] XTax link: 404 not found  \textit{Response:} implemented, Btw, ref [8] at present.
+
+
+\section*{Steven Calvez's Comments}
+
+\subsection*{General Comments}
+\begin{itemize}
+    \item It seems to me that another possible culprit for the excess could be the halo of muons. Is it possible that they could enter the detector from the side (since the x information is limited) or that they could produce secondary particles mimicking neutrinos (Bremsstrahlung ? neutral hadrons ?). Maybe a quick simulation of the halo of muons in a realistic PDHD/EHN1 environment could be enlightening?
+    \textit{Response:} \textcolor{red}{Maybe we can introduce some numbers of the estimations that we did}
+    
+    \item There are a few mentions of ongoing or future studies. What is the plan/status for those? A dedicated background simulation could provide some useful insights, but I realize this might be quite challenging.
+     \textit{Response:} \textcolor{red}{I think we should provide an estimate for this. There is no people available to work on this so not sure how to proceed}
+     
+    \item How does the reconstructed angular distribution of the beam-on events compare to the neutrino MC?
+    \item Is it possible to discriminate between hadronic showers (what you would mostly expect from mainly numu) and electromagnetic showers (possibly more likely to be backgrounds)?
+    \item How are cathode crossing events handled? We should have the t0 for those, so are there any?
+    \item If it is not possible to know the vertex position in X, is it at least to know which TPC the events are reconstructed in? Is the rate between the Jura vs Salev sides somewhat close to expectations?
+    \item The use of “beam-off”, “spill-off”, and “off spill” is slightly confusing. First, I guess they all refer to the same conditions, right? Second, it seems that beam/spill-off does not mean the beam is actually off; it just means the POT is below a seemingly arbitrary value. Third, beam-off periods can have higher activities than beam-on low TP periods (Table 8).
+\end{itemize}
+
+\subsection*{Specific Comments}
+\begin{itemize}
+    \item Figure 2: How accurate is the diagram (e.g. NP02 should be at an angle)? I am particularly interested in the dark blue area, which seems to foreshadow that neutrinos are only to be expected in the lower part of NP04. Figure 7 seems to confirm this preference, but it is not a sharp drop-off of the flux off-axis, especially for numu.
+    \item Fig 10: Do you see some of those muons with some relaxed cuts (still trying to reject cosmics)?
+    \item L386-389: What sort of inconsistencies ?
+    
+    \item L410: Could including those beam-induced particles in the simulation better explain the data?
+    \textit{Response:} This is difficult to include because the beam line covers several hundred meters and a lot of experiments are present there and take beam at a different times
+     \item L414: Is the tech note going to be updated?
+   
+    \item L422: “where correlations were observed”, meaning no correlations were observed in other runs?
+    \item L422-428: The explanations are not clear to me.
+    \item Fig 15: What would be more telling is comparing those correlations for when the spill is on vs when the spill is off? Would the correlations in spill-on be statistically significantly larger than in spill-off?
+    \item L460: What is the difference between the two analyses?
+    \item L488: What is the agreement for the nue flavor set?
+    \item L556: Which figure shows a “clear separation”?
+    \item L562 - Table 5: Is it OK to merge and average the runs ? Are all runs expected to give similar rates ? Would it be interesting to do the analysis run by run? Is there a particular configuration that could give a larger excess?
+    \item L572: Is $theta_beam$ only $theta_yz$ ? What about $theta_xz$ (the transverse component)?
+    \item L582-583: This cut is not necessarily removing vertical events; it is actually selecting events with long z components.
+    \item General comment on event selection: Is there no containment criterion?
+    \item Fig 14: Do you understand why “spill on” mode sometimes has the same TP rate as “spill off”?
+    \item Fig 17: If I understood correctly, this is MC, so why are the statistics so low? How does it compare to true energy or true deposited energy? Fig 12 says it peaks at 20-30GeV.
+    \item Fig 19: How does the cosine x distribution compare to the selected data events? Why is the cosine Y distribution so flat? I would have expected it to be more peaked, like for cosine X.
+    \item Fig 24: Why is there such a big difference between the blue and green algorithms? It feels a bit weird to choose the maximum of the two when they are not actually understood. Also, if most of the background in spill-off data comes from cosmics, I would have expected the distribution to be peaked at 0 (vertical cosmics are perpendicular to the beam). And, what are the different spikes?   
+    \item Table 6: The order of cuts is peculiar. I would group similar cuts together (C140, C40, etc.).
+    \item Table 6: The tail cut has a big effect on beam-on events. In fact, the S/B ratio even decreases. Another way of saying it is: before the tail cut, 78\% of the beam-off events had “long tails”, while 87\% of the beam-on events had one. If there are relatively more events with tails when the beam is on, and those tails are not characteristic of neutrinos, this would point to it coming from backgrounds where the tails are mis-reconstructed rather than neutrinos.
+    \item Fig 27: Is there no information on X ? Are all TPC volumes used? Could at least presumably show counts in Jura TPCs vs Salev TPCs ?
+    \item Fig 25 and (3): The neutrino model seems off. In fact, it looks like a Neyman chi-square test using this distribution could actually show a slight preference for the background-only hypothesis rather than the current neutrino model.
+    \item Eq (3): What is theta?
+    \item Fig 29: Which TPCs are they from? Is it possible that such events start on the side of the TPC? Is it possible to show all 31 events?
+    \item L677: “number of events per hour in the low TP period is compatible”: not really, according to the quoted uncertainty. What is even weirder is that the low TP period has an even lower rate than the beam-off data. This further puts into question the definition of beam-off data. Fig 32: Given the different event rates between low (1.65/h) and high TP (2.10/h), I would have expected to see a ~20-25\% in the event counts, but the spectra look very similar.
+    \item Fig 33-34: Fig 33 is high TP only, and Fig 34 is low TP only?
+    \item Fig 46-64: The excess of events comes mostly background dominated region. It does not come from the neutrino region.
+    \item Fig 55-56: Why isn’t the number of data events the same between the two figures? And maybe more generally for the rest of the figures in the annexes.
+\end{itemize}
+
+\end{document}
