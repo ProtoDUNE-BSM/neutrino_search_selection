@@ -66,7 +66,7 @@ ROOT files live on `/pnfs/dune/scratch/users/dpullia/` (FNAL dCache).
 
 Current cuts (in order):
 1. `neutrino_pfp_in_slice` — numberOfPFParticles ≥ 0
-2. `vertex_fiducial_volume` — vertexZ ≥ 24.15, vertexY ≤ 415.24
+2. `vertex_fiducial_volume` — vertexZ ≥ 20, vertexY ≤ 400 (`cut_thresholds['vertex_y_max']` in `python/cuts.py`)
 3. `daughter_particles` — numberOfPFParticles ≥ 7.6
 4. `max_directionZ` — max(directionZ, directionZ2) > 0.965
 5. `energy_first10cm` — energyDepositedInFirst10cm > 774 (if vertexZ < 450)

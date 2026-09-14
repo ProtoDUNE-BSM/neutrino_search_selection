@@ -554,7 +554,7 @@ def logpost(args, mc_events, mc_weights, data_events, data_weights):
 default_cut_thresholds = {
     "neutrino_pfp_in_slice": 0,
     "vertex_z_min": 20,
-    "vertex_y_max": 550,
+    "vertex_y_max": 400,
     "num_pf_particles_min": 6,
     "direction_z_max": 0.97,
     "energy_first10cm_min": 3000,
@@ -679,7 +679,7 @@ with open(os.path.join(output_folder_base, "cut_optimization_results.txt"), "w")
     cut_thresholds = {
         "neutrino_pfp_in_slice": 0,
         "vertex_z_min": 20,
-        "vertex_y_max": 550,
+        "vertex_y_max": 400,
         "num_pf_particles_min": 6,
         "direction_z_max": 0.97,
         "energy_first10cm_min": 3000,

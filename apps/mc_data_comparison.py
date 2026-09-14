@@ -58,9 +58,9 @@ else:
     sys.exit(1)
 
 
-mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames = load_from_folder(  parameters["folders"]["mother_folder_mc"], 
-                                                                                                    get_truth=parameters["mc"]["GET_TRUTH"], 
-                                                                                                    get_full_array=True, 
+mc_events, mc_true_events, mc_full_events, mc_weights, mc_labels, mc_filenames = load_from_folder(  parameters["folders"]["mother_folder_mc"],
+                                                                                                    get_truth=parameters["mc"]["GET_TRUTH"],
+                                                                                                    get_full_array=False,
                                                                                                     use_combined=parameters["mc"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["mc"]["WEIGHT_MODE"], 
                                                                                                     parameters=parameters["mc"],
@@ -82,9 +82,9 @@ mc_filenames = [mc_filenames[i] for i in index_mc]
 
 print(f"MC events: {np.sum(mc_weights)}")
 
-data_events, data_true_events, data_full_events, data_weights, data_labels, data_filenames = load_from_folder(  parameters["folders"]["mother_folder_data"], 
-                                                                                                    get_truth=parameters["data"]["GET_TRUTH"], 
-                                                                                                    get_full_array=True, 
+data_events, data_true_events, data_full_events, data_weights, data_labels, data_filenames = load_from_folder(  parameters["folders"]["mother_folder_data"],
+                                                                                                    get_truth=parameters["data"]["GET_TRUTH"],
+                                                                                                    get_full_array=False,
                                                                                                     use_combined=parameters["data"]["USE_COMBINED"], 
                                                                                                     weights_mode=parameters["data"]["WEIGHT_MODE"], 
                                                                                                     parameters=parameters["data"],

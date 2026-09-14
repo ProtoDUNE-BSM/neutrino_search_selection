@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import os
 import sys
 import argparse
@@ -190,15 +191,18 @@ max_idx = np.unravel_index(np.argmax(H), H.shape)
 R_beamOFF_mode = xcenters[max_idx[1]]
 R_nu_mode = ycenters[max_idx[0]]
 
-# Credible regions: for a k-dimensional Gaussian the probability enclosed
-# within radius n (in units of standard deviations) is the CDF of a chi2
-# distribution with k=ndim degrees of freedom evaluated at n^2. The radii
-# below (1, 3, 5) are only used to pick a spread of enclosed fractions to
-# draw contours at; the plot itself reports the enclosed probability, not
-# the radius, to keep the vocabulary purely Bayesian (credible regions,
-# not sigma significances).
+# Credible regions: use the standard 1D-Gaussian quantiles for n = 1, 3, 5
+# sigma (i.e. the probability enclosed within [-n, n] for a 1D Gaussian),
+# which is the CDF of a chi2 distribution with 1 degree of freedom evaluated
+# at n^2. These are the usual "n-sigma equivalent" fractions (68.27%,
+# 99.73%, 99.99994%), independent of the 2D nature of this posterior; the
+# plot itself reports the enclosed probability, not the radius, to keep the
+# vocabulary purely Bayesian (credible regions, not sigma significances).
 contour_radii = [1, 3, 5]
-enclosed_fractions = [stats.chi2.cdf(r ** 2, df=ndim) for r in contour_radii]
+# Distinct colors per sigma level, aligned with contour_radii; red is reserved
+# for the posterior-mode marker so it is excluded here.
+contour_colors = ["white", "cyan", "magenta"]
+enclosed_fractions = [stats.chi2.cdf(r ** 2, df=1) for r in contour_radii]
 
 
 def plot_posterior_contours(contour_density, output_path, title_suffix=""):
@@ -216,7 +220,8 @@ def plot_posterior_contours(contour_density, output_path, title_suffix=""):
     # duplicates (can happen at high sigma if the binning is too coarse).
     order = np.argsort(thresholds)
     contour_levels = []
-    contour_labels = {}
+    level_colors = []
+    level_labels = []
     for i in order:
         level = thresholds[i]
         if contour_levels and level <= contour_levels[-1]:
@@ -224,29 +229,30 @@ def plot_posterior_contours(contour_density, output_path, title_suffix=""):
         contour_levels.append(level)
         pct = enclosed_fractions[i] * 100
         pct_str = f"{pct:.4f}%" if pct >= 99.99 else f"{pct:.1f}%"
-        contour_labels[level] = f"{pct_str} CR"
+        level_colors.append(contour_colors[i])
+        level_labels.append(f"{contour_radii[i]}σ ({pct_str} CR)")
 
     plt.figure(figsize=(7, 6))
     plt.hist2d(R_beamOFF_samples, R_nu_samples, bins=(100, 100), range=[b_rate_limits, n_rate_limits])
     plt.colorbar(label="Counts")
     if len(contour_levels) > 0:
-        CS = plt.contour(X, Y, contour_density, levels=contour_levels, colors="white", linewidths=1.0)
-        # Place one label per level manually, on the midpoint of its longest
-        # segment: clabel's automatic placement silently skips contours (e.g.
-        # the innermost 1-sigma ring) that are too small to fit the text inline.
-        manual_positions = []
-        for level, segs in zip(CS.levels, CS.allsegs):
-            if segs:
-                longest = max(segs, key=len)
-                manual_positions.append(tuple(longest[len(longest) // 2]))
-        plt.clabel(CS, fmt=lambda v: contour_labels.get(v, f"{v:.0f}"), colors="white", fontsize=8,
-                   manual=manual_positions if manual_positions else False)
-    plt.scatter(R_beamOFF_mode, R_nu_mode, color="red", marker="x", s=80,
-                label=f"Mode: R_beamOFF={R_beamOFF_mode:.3f}, R_nu={R_nu_mode:.3f}")
+        plt.contour(X, Y, contour_density, levels=contour_levels, colors=level_colors, linewidths=1.5)
+    mode_scatter = plt.scatter(R_beamOFF_mode, R_nu_mode, color="red", marker="x", s=80,
+                                label=f"Mode: R_beamOFF={R_beamOFF_mode:.3f}, R_nu={R_nu_mode:.3f}")
     plt.xlabel("R_beamOFF (events / hour)")
     plt.ylabel("R_nu (events / hour)")
+    plt.xlim(0, 1.5)
+    plt.ylim(0, 6)
     plt.title(f"MCMC posterior of (R_beamOFF, R_nu){title_suffix}")
-    plt.legend(loc="upper right")
+    ax = plt.gca()
+    mode_legend = ax.legend(handles=[mode_scatter], loc="upper right")
+    ax.add_artist(mode_legend)
+    if len(contour_levels) > 0:
+        # Innermost (smallest sigma) contour first, drawn as a separate legend
+        # box anchored below the mode legend rather than labelling in place.
+        contour_handles = [Line2D([0], [0], color=c, lw=1.5, label=lbl)
+                            for c, lbl in reversed(list(zip(level_colors, level_labels)))]
+        ax.legend(handles=contour_handles, loc="upper right", bbox_to_anchor=(1.0, 0.90))
     plt.savefig(output_path, dpi=200)
     plt.clf()
 
